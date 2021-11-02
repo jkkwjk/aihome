@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/aihome/aihome-web.iml" filepath="$PROJECT_DIR$/aihome/aihome-web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/espclient/espclient.iml" filepath="$PROJECT_DIR$/espclient/espclient.iml" />
-    </modules>
-  </component>
-</project>
