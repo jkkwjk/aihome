@@ -134,14 +134,13 @@ export default {
       const posr = this.$refs.posr.$el;
       const x = e.clientX - posr.offsetLeft;
       const y = e.clientY - posr.offsetTop;
-      const moveToIndex = parseInt(y / (this.moveElement.height + 10), 10) * 4 + parseInt(x / (this.moveElement.width + 10), 10);
-
+      let moveToIndex = parseInt(y / (this.moveElement.height + 10), 10) * 4 + parseInt(x / (this.moveElement.width + 10), 10);
       this.hardwareOverview.removeEqual((o) => o.type === 999);
-      if (this.moveElement.devId != null) {
-        if (this.originIndex === -1) {
-          this.originIndex = this.hardwareOverview.findIndex((o) => o.devId === this.moveElement.devId);
-        }
 
+      if (moveToIndex >= this.hardwareOverview.length) {
+        moveToIndex = this.hardwareOverview.length - 1;
+      }
+      if (this.moveElement.devId != null) {
         if (moveToIndex > this.originIndex) {
           this.hardwareOverview.splice(moveToIndex + 1, 0, this.temp);
         } else {
@@ -149,8 +148,8 @@ export default {
         }
       } else if (this.originIndex !== -1) {
         if (this.originIndex !== moveToIndex) {
-          console.log(this.hardwareOverview[this.originIndex].devId, this.hardwareOverview[moveToIndex].devId);
           console.log(`移动；${this.originIndex} -> ${moveToIndex}`);
+          console.log(this.hardwareOverview[this.originIndex].devId, this.hardwareOverview[moveToIndex].devId);
         }
         this.originIndex = -1;
       }
@@ -164,7 +163,19 @@ export default {
     hardwareOverview() {
       return this.$store.state.hardwareOverview;
     },
-
+  },
+  watch: {
+    'moveElement.devId': {
+      handler() {
+        // 防止闪烁
+        if (this.moveElement.devId != null) {
+          this.originIndex = this.hardwareOverview.findIndex((o) => o.devId === this.moveElement.devId);
+          this.hardwareOverview.splice(this.originIndex, 0, this.temp);
+        } else {
+          this.hardwareOverview.removeEqual((o) => o.type === 999);
+        }
+      },
+    },
   },
 };
 </script>
