@@ -1,10 +1,11 @@
 <template>
   <el-card :class="[
-           isShake? 'shake':'',
+           isShake && canShake? 'shake':'',
            'widget',
-           moveMe? 'move-this':'']"
+           moveMe? 'move-this':''
+           ]"
            ref="card"
-           @mousedown.native.self="handleMouseDown"
+           @mousedown.native.self="() => {if(canShake) handleMouseDown()}"
            @mouseup.native="handleMouseUp"
            @mouseleave.native="handleMouseLeave"
            @touchstart.native="handleMouseDown"
@@ -42,6 +43,7 @@ export default {
   props: {
     title: { type: String, required: false },
     devId: { type: String, required: true },
+    canShake: { type: Boolean, required: false, default: true },
   },
   data() {
     return {
@@ -53,7 +55,7 @@ export default {
 
   methods: {
     handleDeleteWidget() {
-      console.log(`delete ${this.devId}`);
+      this.$store.state.hardwareOverview.removeEqual((o) => o.devId === this.devId);
       this.$store.commit('setShake', false);
     },
 

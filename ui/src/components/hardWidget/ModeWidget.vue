@@ -1,6 +1,6 @@
 <template>
-  <el-col :sm="6" :xs="12">
-    <widget :title="title" :dev-id="devId">
+  <el-col :sm="canShake? 6:12" :xs="12">
+    <widget :title="title" :dev-id="devId" :can-shake="canShake">
       <i :class="icons[state].icon"
          :style="{'font-size': '50px', 'color': state? icons[state].activeColor: icons[state].unActiveColor}"
          v-if="icons && icons[state]">
@@ -10,7 +10,7 @@
         {{ texts[state].text }}
       </span>
 
-      <el-radio-group v-model="state__inner" style="margin-top: 20px;" v-if="canControl">
+      <el-radio-group v-model="state__inner" style="margin-top: 20px;" v-if="canControl" @click.native.stop>
         <el-radio-button :label="text" v-for="{text, value} in stateOptions" :key="value"></el-radio-button>
       </el-radio-group>
     </widget>
@@ -24,6 +24,8 @@ export default {
   name: 'ModeWidget',
   components: { Widget },
   props: {
+    canShake: { type: Boolean, required: false, default: true },
+
     devId: { type: String, required: true },
     canControl: { type: Boolean, required: true },
     title: { type: String, required: false },

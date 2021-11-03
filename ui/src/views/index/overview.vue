@@ -2,7 +2,7 @@
   <div class="overview">
     <el-row class="tool-bar"
     :style="{'margin-top': $store.state.isShake? '0':'-30px'}">
-      <alpha-button icon="el-icon-plus" round size="mini"/>
+      <alpha-button icon="el-icon-plus" round size="mini" @click="addOverviewDialogVisible=true"/>
       <alpha-button style="float: right"
                     round
                     size="mini"
@@ -10,43 +10,31 @@
     </el-row>
 
     <el-row :gutter="10" class="data" @mousemove.native="handleMouseMove" ref="posr">
-      <template v-for="h in hardware">
-
-        <on-off-widget v-if="h.type === 0" :key="h.devId" :dev-id="h.devId"
-          :state.sync="h.state" :title="h.title" :icon="h.icon" :can-control="h.canControl"
-          :icon-active-color="h.iconActiveColor" :icon-un-active-color="h.iconUnActiveColor"
-          :text-active="h.textActive" :text-un-active="h.textUnActive"/>
-        <mode-widget v-if="h.type === 1" :key="h.devId" :dev-id="h.devId"
-                       :state.sync="h.state" :title="h.title" :can-control="h.canControl"
-                       :state-options="h.stateOptions" :texts="h.texts" :icons="h.icons"/>
-        <value-widget v-if="h.type === 2" :key="h.devId" :dev-id="h.devId"
-                       :state.sync="h.state" :title="h.title" :icon="h.icon" :can-control="h.canControl"
-                       :text="h.text" :config="h.config" :icon-color-for-max="h.iconColorForMax"/>
-
-        <el-col :sm="6" :xs="12" v-if="h.type === 999" :key="h.devId"
-          :style="'height: ' + (242) + 'px'">
-        </el-col>
-      </template>
-
+      <all-widget :hardware="hardwareOverview"></all-widget>
     </el-row>
+
+    <el-dialog title="添加到概览"
+               :visible.sync="addOverviewDialogVisible">
+      <el-row :gutter="10">
+        <all-widget :can-shake="false" :hardware="hardwareWithOutOverview"></all-widget>
+      </el-row>
+    </el-dialog>
   </div>
 
 </template>
 
 <script>
+import AllWidget from '@components/hardWidget/AllWidget';
 import AlphaButton from '../../components/AlphaButton';
-import OnOffWidget from '../../components/hard/OnOffWidget';
-import ModeWidget from '../../components/hard/ModeWidget';
-import ValueWidget from '../../components/hard/ValueWidget';
 
 export default {
   name: 'overview',
   components: {
-    ValueWidget, ModeWidget, OnOffWidget, AlphaButton,
+    AllWidget, AlphaButton,
   },
   data() {
     return {
-      hardware: [
+      hardwareWithOutOverview: [
         {
           type: 0,
           devId: 'aaaaa',
@@ -120,7 +108,7 @@ export default {
         {
           type: 2,
           devId: 'cccc',
-          canControl: false,
+          canControl: true,
           title: '4',
           text: '亮度调节',
           state: 40,
@@ -132,24 +120,13 @@ export default {
             step: 1,
           },
         },
-        {
-          type: 0,
-          devId: 'aaaac',
-          canControl: true,
-          title: '5',
-          textActive: '开开开',
-          textUnActive: '关了',
-          state: false,
-          icon: 'el-icon-switch-button',
-          iconActiveColor: '#000000',
-          iconUnActiveColor: '#aabbcc',
-        },
       ],
       temp: {
         type: 999,
         devId: 'tmp',
       },
       originIndex: -1,
+      addOverviewDialogVisible: false,
     };
   },
   methods: {
@@ -159,19 +136,20 @@ export default {
       const y = e.clientY - posr.offsetTop;
       const moveToIndex = parseInt(y / (this.moveElement.height + 10), 10) * 4 + parseInt(x / (this.moveElement.width + 10), 10);
 
-      this.hardware.removeEqual((o) => o.type === 999);
+      this.hardwareOverview.removeEqual((o) => o.type === 999);
       if (this.moveElement.devId != null) {
         if (this.originIndex === -1) {
-          this.originIndex = this.hardware.findIndex((o) => o.devId === this.moveElement.devId);
+          this.originIndex = this.hardwareOverview.findIndex((o) => o.devId === this.moveElement.devId);
         }
 
         if (moveToIndex > this.originIndex) {
-          this.hardware.splice(moveToIndex + 1, 0, this.temp);
+          this.hardwareOverview.splice(moveToIndex + 1, 0, this.temp);
         } else {
-          this.hardware.splice(moveToIndex, 0, this.temp);
+          this.hardwareOverview.splice(moveToIndex, 0, this.temp);
         }
       } else if (this.originIndex !== -1) {
         if (this.originIndex !== moveToIndex) {
+          console.log(this.hardwareOverview[this.originIndex].devId, this.hardwareOverview[moveToIndex].devId);
           console.log(`移动；${this.originIndex} -> ${moveToIndex}`);
         }
         this.originIndex = -1;
@@ -182,6 +160,9 @@ export default {
   computed: {
     moveElement() {
       return this.$store.state.moveElement;
+    },
+    hardwareOverview() {
+      return this.$store.state.hardwareOverview;
     },
 
   },

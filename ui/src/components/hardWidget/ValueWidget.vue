@@ -1,6 +1,6 @@
 <template>
-  <el-col :sm="6" :xs="12">
-    <widget :title="title" :dev-id="devId">
+  <el-col :sm="canShake? 6:12" :xs="12">
+    <widget :title="title" :dev-id="devId" :can-shake="canShake">
       <i :class="icon" :style="{'font-size': '50px', 'color': iconColor}" v-if="icon"></i>
       <span style="font-size: 17px;" v-if="text">{{ text }}</span>
       <el-slider v-model="state__inner"
@@ -8,6 +8,7 @@
                  :max="config.max"
                  :step="config.step"
                  style="margin-top: 20px; width: 100%" v-if="canControl"
+                 @click.native.stop
                  @mousedown.native.stop
                  @mouseleave.native.stop
                  @touchstart.native.stop></el-slider>
@@ -25,6 +26,8 @@ export default {
   name: 'ValueWidget',
   components: { Widget },
   props: {
+    canShake: { type: Boolean, required: false, default: true },
+
     devId: { type: String, required: true },
     canControl: { type: Boolean, required: true },
     title: { type: String, required: false },
