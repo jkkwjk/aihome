@@ -24,8 +24,7 @@
                        :text="h.text" :config="h.config" :icon-color-for-max="h.iconColorForMax"/>
 
         <el-col :sm="6" :xs="12" v-if="h.type === 999" :key="h.devId"
-          style="border: 1px black solid">
-
+          :style="'height: ' + (242) + 'px'">
         </el-col>
       </template>
 
@@ -47,7 +46,6 @@ export default {
   },
   data() {
     return {
-      delivery: true,
       hardware: [
         {
           type: 0,
@@ -149,8 +147,9 @@ export default {
       ],
       temp: {
         type: 999,
-        devId: 'adsdxc',
+        devId: 'tmp',
       },
+      originIndex: -1,
     };
   },
   methods: {
@@ -158,26 +157,33 @@ export default {
       const posr = this.$refs.posr.$el;
       const x = e.clientX - posr.offsetLeft;
       const y = e.clientY - posr.offsetTop;
+      const moveToIndex = parseInt(y / (this.moveElement.height + 10), 10) * 4 + parseInt(x / (this.moveElement.width + 10), 10);
 
-      if (this.$store.state.moveElement.devId != null) {
-        const devIndex = this.hardware.findIndex((o) => o.devId === this.$store.state.moveElement.devId);
-        this.hardware.push(JSON.parse(JSON.stringify(this.hardware[devIndex])));
-        this.hardware.removeEqual((o) => o.devId === this.$store.state.moveElement.devId);
+      this.hardware.removeEqual((o) => o.type === 999);
+      if (this.moveElement.devId != null) {
+        if (this.originIndex === -1) {
+          this.originIndex = this.hardware.findIndex((o) => o.devId === this.moveElement.devId);
+        }
 
-        const moveToIndex = parseInt(y / (this.$store.state.moveElement.height + 10), 10) * 4 + parseInt(x / (this.$store.state.moveElement.width + 10), 10);
-        console.log(moveToIndex);
-        this.hardware.removeEqual((o) => o.type === 999);
-        this.hardware.splice(moveToIndex, 0, this.temp);
-      } else {
-        this.hardware.removeEqual((o) => o.type === 999);
+        if (moveToIndex > this.originIndex) {
+          this.hardware.splice(moveToIndex + 1, 0, this.temp);
+        } else {
+          this.hardware.splice(moveToIndex, 0, this.temp);
+        }
+      } else if (this.originIndex !== -1) {
+        if (this.originIndex !== moveToIndex) {
+          console.log(`移动；${this.originIndex} -> ${moveToIndex}`);
+        }
+        this.originIndex = -1;
       }
       this.$store.commit('setXY', { x, y });
     },
   },
   computed: {
-    moveDevId() {
-      return this.$store.state.moveDevId;
+    moveElement() {
+      return this.$store.state.moveElement;
     },
+
   },
 };
 </script>

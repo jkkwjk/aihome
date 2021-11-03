@@ -1,28 +1,42 @@
 <template>
-  <el-card :class="[isShake? 'shake':'', 'widget', moveMe? 'move-this':'']"
-           ref="card" :data-devId="devId"
-           @mousedown.native="handleMouseDown"
+  <el-card :class="[
+           isShake? 'shake':'',
+           'widget',
+           moveMe? 'move-this':'']"
+           ref="card"
+           @mousedown.native.self="handleMouseDown"
            @mouseup.native="handleMouseUp"
            @mouseleave.native="handleMouseLeave"
            @touchstart.native="handleMouseDown"
            @touchend.native="handleMouseUp"
-           :style="{ 'width':moveMe? this.$store.state.moveElement.width+'px':'unset',
-           'left':this.$store.state.moveX-this.offset.x+'px',
-           'top':this.$store.state.moveY-this.offset.y+'px' }">
+           :style="{ 'width': moveMe? this.$store.state.moveElement.width+'px':'unset',
+           'left': this.$store.state.mouse.moveX - this.offset.x + 'px',
+           'top': this.$store.state.mouse.moveY - this.offset.y + 'px' }">
     <div slot="header" class="header" v-if="title">{{ title }}</div>
     <div style="display: flex; flex-direction: column; align-items: center">
-      <el-button @click="handleClose"
-                 type="danger"
-                 class="close-btn"
-                 icon="el-icon-close"
-                 circle
-                 style="display: none"></el-button>
+      <el-popconfirm
+        confirm-button-text='好的'
+        cancel-button-text='不用了'
+        icon="el-icon-info"
+        icon-color="red"
+        title="从概览中删除该组件(不会删除硬件实体)？"
+        @confirm="handleDeleteWidget"
+      >
+        <el-button slot="reference"
+                   type="danger"
+                   class="close-btn"
+                   icon="el-icon-close"
+                   circle
+                   style="display: none"></el-button>
+      </el-popconfirm>
+
       <slot/>
     </div>
   </el-card>
 </template>
 
 <script>
+
 export default {
   name: 'widget',
   props: {
@@ -32,15 +46,15 @@ export default {
   data() {
     return {
       time: 500,
-      moveMe: false,
       offset: {},
       timeout: null,
     };
   },
 
   methods: {
-    handleClose() {
-      console.log(this.$store.state.moveX);
+    handleDeleteWidget() {
+      console.log(`delete ${this.devId}`);
+      this.$store.commit('setShake', false);
     },
 
     handleMouseDown() {
@@ -49,10 +63,9 @@ export default {
         const posr = this.$refs.card.$el;
         this.$store.commit('setMoveWidth', posr.clientWidth);
         this.$store.commit('setMoveHeight', posr.clientHeight);
-        this.offset.x = this.$store.state.moveX - posr.offsetLeft;
-        this.offset.y = this.$store.state.moveY - posr.offsetTop;
+        this.offset.x = this.$store.state.mouse.moveX - posr.offsetLeft;
+        this.offset.y = this.$store.state.mouse.moveY - posr.offsetTop;
         this.$store.commit('setMoveDevId', this.devId);
-        this.moveMe = true;
       } else {
         this.timeout = setTimeout(() => {
           this.$store.commit('setShake', true);
@@ -62,19 +75,21 @@ export default {
 
     handleMouseUp() {
       this.$store.commit('setMoveDevId', null);
-      this.moveMe = false;
-      console.log('up');
+      // console.log('up');
       clearTimeout(this.timeout);
     },
 
     handleMouseLeave() {
-      console.log('leave');
+      // console.log('leave');
       clearTimeout(this.timeout);
     },
   },
   computed: {
     isShake() {
       return this.$store.state.isShake;
+    },
+    moveMe() {
+      return this.$store.state.moveElement.devId === this.devId;
     },
   },
 

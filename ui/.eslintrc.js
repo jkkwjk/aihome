@@ -20,5 +20,6 @@ module.exports = {
     'import/extensions': 'off',
     'array-callback-return' : 'off',
     'func-names' : 'off',
+    'linebreak-style' : "off",
   },
 };
