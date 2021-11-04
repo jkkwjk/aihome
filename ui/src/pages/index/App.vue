@@ -31,23 +31,15 @@ export default {
 
 <style scoped lang="scss">
   .main {
-    background-color: rgb(50, 53, 56);
-    height: 100%;
     padding: 20px;
   }
-  @media (max-width: 767px){
-    .app{
-      display: flex;
-      flex: 1;
+  .app {
+    background-color: rgb(50, 53, 56);
+    display: flex;
+    flex: 1;
+    min-height: 100%;
+    @media (max-width: 767px){
       flex-direction: column;
-      height: 100%;
-    }
-  }
-  @media (min-width: 767px){
-    .app{
-      display: flex;
-      flex: 1;
-      height: 100%;
     }
   }
 </style>

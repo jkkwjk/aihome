@@ -55,4 +55,8 @@ export default {
     height: 100%;
     z-index: 1;
   }
+  .el-menu:not(.el-menu--horizontal){
+    position: fixed;
+    width: 16.66667%;
+  }
 </style>

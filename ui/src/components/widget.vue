@@ -102,7 +102,6 @@ export default {
   .widget {
     user-select: none;
     margin-bottom: 10px;
-    /*transition: 3s;*/
     min-height: 230px;
   }
 
