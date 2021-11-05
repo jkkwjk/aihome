@@ -1,48 +1,36 @@
 <template>
-  <div>
-    自动化
-    <textarea ref="editor"></textarea>
+  <div class="auto">
+
+    <code-view :code.sync="code"></code-view>
   </div>
 </template>
 
 <script>
-import CodeMirror from '@assets/thirdpart/codemirror/importAll';
+
+import CodeView from '@components/auto/CodeView';
 
 export default {
   name: 'auto',
-  mounted() {
-    const el = this.$refs.editor;
-    const version = '# version: Python3\n\n';
-    const codeAreaTip = '# please edit your code here:\n';
-    const codeStart = '# code start\n\n';
-    const codeEnd = '# code end\n\n';
-    const codeTip = "'''\nThis function is the entry of this program and\nit must be return your answer of current question.\n'''\n";
-    const code = 'def solution():\n\tpass';
-    const initValue = version + codeAreaTip + codeStart + codeEnd + codeTip + code;
-    const myCodeMirror = CodeMirror.fromTextArea(el, {
-      mode: 'python',
-      theme: 'leetcode',
-      keyMap: 'sublime',
-      lineNumbers: true,
-      smartIndent: true,
-      indentUnit: 4,
-      indentWithTabs: true,
-      lineWrapping: true,
-      gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-      foldGutter: true,
-      autofocus: true,
-      matchBrackets: true,
-      autoCloseBrackets: true,
-      styleActiveLine: true,
-    });
-    myCodeMirror.setOption('value', initValue);
-    myCodeMirror.on('keypress', () => {
-      myCodeMirror.showHint();
-    });
+  components: { CodeView },
+  data() {
+    return {
+      code: 'version: Python',
+    };
   },
-
   methods: {
-
+    a() {
+      const version = '# version: Python3\n\n';
+      const codeAreaTip = '# 注意：写在外部的变量各脚本间上下文将会共享\n\n';
+      const codeTip = "'''\n下面的函数将会按照定时或者状态驱动的方式执行\n'''\n";
+      const code = 'def doAutoTask(states):\n\t# write your code here.\n\tpass';
+      const initValue = version + codeAreaTip + codeTip + code;
+      console.log(initValue);
+    },
+  },
+  watch: {
+    code() {
+      console.log(this.code);
+    },
   },
 };
 </script>

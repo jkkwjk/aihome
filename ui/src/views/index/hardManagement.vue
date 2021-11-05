@@ -4,7 +4,7 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-table :data="props.row.spilt"
-            style="margin-bottom: 20px; margin-left: 50px;">
+            style="margin-bottom: 20px; margin-left: 50px; width: calc(100% - 20px)">
             <el-table-column label="子状态">
               <template slot-scope="scope">
                 <div class="name">
@@ -16,6 +16,7 @@
                 </div>
               </template>
             </el-table-column>
+            <el-table-column prop="stateId" label="状态ID" />
             <el-table-column label="类型">
               <template slot-scope="scope">
                 <span>{{ scope.row.type | friendlyType }}</span>
@@ -40,6 +41,7 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column prop="devId" label="设备ID" width="100" />
       <el-table-column prop="ip" label="设备IP" width="140" />
       <el-table-column prop="lastHeartTime" sortable width="180" label="最后一次心跳时间" />
       <el-table-column prop="discoverTime" sortable width="180" label="设备发现时间" />
@@ -95,7 +97,7 @@ export default {
     return {
       hardware: [
         {
-          devId: 'abc',
+          devId: 'asdfghjk',
           icon: 'font-ext1 dengpao',
           name: '卧室灯泡',
           ip: '255.255.255.255',
@@ -103,7 +105,7 @@ export default {
           discoverTime: '2021-11-03 16:20:29',
           spilt: [
             {
-              devId: 'abc-1',
+              stateId: 'asdfghjk-1',
               title: '开关',
               icon: 'el-icon-switch-button',
               type: 0,
@@ -111,7 +113,7 @@ export default {
               reportTime: '2021-11-4 11:38:57',
             },
             {
-              devId: 'abc-2',
+              stateId: 'asdfghjk-2',
               title: '亮度',
               icon: '',
               type: 2,
@@ -120,7 +122,7 @@ export default {
           ],
         },
         {
-          devId: 'abc',
+          devId: 'asdfghjk',
           icon: 'font-ext1 dengpao',
           name: '卧室灯泡',
           ip: '255.255.255.255',
@@ -128,14 +130,14 @@ export default {
           discoverTime: '2021-11-03 16:20:29',
           spilt: [
             {
-              devId: 'abc-1',
+              stateId: 'asdfghjk-1',
               title: '开关',
               icon: 'el-icon-switch-button',
               type: 0,
               state: 'true',
             },
             {
-              devId: 'abc-2',
+              stateId: 'asdfghjk-2',
               title: '亮度',
               icon: '',
               type: 2,
