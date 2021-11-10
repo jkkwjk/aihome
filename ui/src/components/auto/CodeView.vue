@@ -1,5 +1,7 @@
 <template>
-  <textarea ref="editor"></textarea>
+  <div class="code-view">
+    <textarea ref="editor"></textarea>
+  </div>
 </template>
 
 <script>
@@ -62,6 +64,11 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  .code-view {
+    height: calc(100% - 100px);
+    &::v-deep .CodeMirror {
+      height: 100%;
+    }
+  }
 </style>

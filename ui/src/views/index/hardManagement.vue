@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="searchHardware" style="margin-bottom: 20px;">
+    <el-table :data="hardware.filter((o) => o.name.indexOf(searchText) !== -1)" style="margin-bottom: 20px;">
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-table :data="props.row.spilt"
@@ -186,11 +186,6 @@ export default {
       this.discoverDialogVisible = true;
     },
   },
-  computed: {
-    searchHardware() {
-      return this.hardware.filter((o) => o.name.indexOf(this.searchText) !== -1);
-    },
-  },
   filters: {
     friendlyType(type) {
       switch (type) {
@@ -212,6 +207,7 @@ export default {
   .name {
     display: flex;
     align-items: center;
+    white-space: nowrap;
 
     div {
       flex: 1;
