@@ -8,7 +8,6 @@
     <artifactId>aihome-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>aihome-parent</name>
 
     <properties>
         <java.version>1.8</java.version>
@@ -24,8 +23,9 @@
     </dependencyManagement>
 
     <modules>
-        <module>aihome</module>
+        <module>aihome-service</module>
         <module>aihome-hardware</module>
-        <module>aihome-web</module>
+        <module>aihome-start</module>
+        <module>aihome-core</module>
     </modules>
 </project>
