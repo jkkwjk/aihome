@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ModeStateRepository extends JpaRepository<ModeStateDO, Integer> {
+	ModeStateDO findByStateId(String stateId);
 }

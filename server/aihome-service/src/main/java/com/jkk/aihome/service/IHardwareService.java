@@ -1,11 +1,11 @@
 package com.jkk.aihome.service;
 
-import com.jkk.aihome.entity.DO.HardwareDO;
+import com.jkk.aihome.entity.VO.HardwareWithStateVO;
 
 import java.util.List;
 
 public interface IHardwareService {
-	List<HardwareDO> finAll();
+	List<HardwareWithStateVO> findAllHardwiredAndStates();
 
-	Integer add(HardwareDO hardwareDO);
+	Boolean updateHardwareNameByDevId(String devId, String name);
 }

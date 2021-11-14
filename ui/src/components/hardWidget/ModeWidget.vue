@@ -1,17 +1,17 @@
 <template>
   <el-col :sm="canShake? 6:12" :xs="12">
-    <widget :title="title" :dev-id="devId" :can-shake="canShake">
-      <i :class="icons[state].icon"
-         :style="{'font-size': '50px', 'color': state? icons[state].activeColor: icons[state].unActiveColor}"
-         v-if="icons && icons[state]">
+    <widget :name="name" :state-id="stateId" :can-shake="canShake">
+      <i :class="options[state].icon"
+         :style="{'font-size': '50px', 'color': options[state].color}"
+         v-if="options[state] && options[state].icon">
       </i>
       <span style="font-size: 17px;"
-            v-if="texts && texts[state]">
-        {{ texts[state].text }}
+            v-if="options[state] && options[state].text">
+        {{ options[state].text }}
       </span>
 
       <el-radio-group v-model="state__inner" style="margin-top: 20px;" v-if="canControl" @click.native.stop>
-        <el-radio-button :label="text" v-for="{text, value} in stateOptions" :key="value"></el-radio-button>
+        <el-radio-button :label="options[modeValue].modeText" v-for="modeValue in Object.keys(options)" :key="modeValue"></el-radio-button>
       </el-radio-group>
     </widget>
   </el-col>
@@ -26,23 +26,23 @@ export default {
   props: {
     canShake: { type: Boolean, required: false, default: true },
 
-    devId: { type: String, required: true },
+    stateId: { type: String, required: true },
     canControl: { type: Boolean, required: true },
-    title: { type: String, required: false },
-    texts: { type: Object, required: false },
-    icons: { type: Object, required: false },
-    stateOptions: { type: Array, required: true },
+    name: { type: String, required: false },
+    options: { type: Object, required: true },
     state: { type: String, required: true },
   },
   computed: {
     state__inner: {
       get() {
-        const option = this.stateOptions.find((o) => o.value === this.state);
-        return option.text;
+        return this.options[this.state].modeText;
       },
       set(v) {
-        const option = this.stateOptions.find((o) => o.text === v);
-        this.$emit('update:state', option.value);
+        Object.keys(this.options).forEach((modeValue) => {
+          if (this.options[modeValue].modeText === v) {
+            this.$emit('update:state', modeValue);
+          }
+        });
       },
     },
   },

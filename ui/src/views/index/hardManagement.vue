@@ -3,15 +3,15 @@
     <el-table :data="hardware.filter((o) => o.name.indexOf(searchText) !== -1)" style="margin-bottom: 20px;">
       <el-table-column type="expand">
         <template slot-scope="props">
-          <el-table :data="props.row.spilt"
-            style="margin-bottom: 20px; margin-left: 50px; width: calc(100% - 20px)">
+          <el-table :data="props.row.states"
+            style="margin-bottom: 20px; margin-left: 50px; width: calc(100% - 40px)">
             <el-table-column label="子状态">
               <template slot-scope="scope">
                 <div class="name">
                   <i :class="scope.row.icon"/>
                   <editable-span
-                    :text="scope.row.title"
-                    @edit="(text) => handleEditSpiltTitle(scope.row, text)"
+                    :text="scope.row.name"
+                    @edit="(text) => handleEditStateName(scope.row, text)"
                   />
                 </div>
               </template>
@@ -43,7 +43,7 @@
       </el-table-column>
       <el-table-column prop="devId" label="设备ID" width="100" />
       <el-table-column prop="ip" label="设备IP" width="140" />
-      <el-table-column prop="lastHeartTime" sortable width="180" label="最后一次心跳时间" />
+      <el-table-column prop="heartTime" sortable width="180" label="最后一次心跳时间" />
       <el-table-column prop="discoverTime" sortable width="180" label="设备发现时间" />
       <el-table-column align="right">
         <template slot="header" slot-scope="/*eslint-disable vue/no-unused-vars*/scope">
@@ -89,63 +89,14 @@
 <script>
 
 import EditableSpan from '@components/EditableSpan';
+import hardwareApi from '../../api/HardwareApi';
 
 export default {
   name: 'hardManagement',
   components: { EditableSpan },
   data() {
     return {
-      hardware: [
-        {
-          devId: 'asdfghjk',
-          icon: 'font-ext1 dengpao',
-          name: '卧室灯泡',
-          ip: '255.255.255.255',
-          lastHeartTime: '2021-11-03 16:20:26',
-          discoverTime: '2021-11-03 16:20:29',
-          spilt: [
-            {
-              stateId: 'asdfghjk-1',
-              title: '开关',
-              icon: 'el-icon-switch-button',
-              type: 0,
-              state: 'true',
-              reportTime: '2021-11-4 11:38:57',
-            },
-            {
-              stateId: 'asdfghjk-2',
-              title: '亮度',
-              icon: '',
-              type: 2,
-              state: '30',
-            },
-          ],
-        },
-        {
-          devId: 'asdfghjk',
-          icon: 'font-ext1 dengpao',
-          name: '卧室灯泡',
-          ip: '255.255.255.255',
-          lastHeartTime: '2021-11-03 16:20:26',
-          discoverTime: '2021-11-03 16:20:29',
-          spilt: [
-            {
-              stateId: 'asdfghjk-1',
-              title: '开关',
-              icon: 'el-icon-switch-button',
-              type: 0,
-              state: 'true',
-            },
-            {
-              stateId: 'asdfghjk-2',
-              title: '亮度',
-              icon: '',
-              type: 2,
-              state: '30',
-            },
-          ],
-        },
-      ],
+      hardware: [],
       newHardware: [],
       selectNewHardware: [],
       searchText: '',
@@ -153,16 +104,26 @@ export default {
     };
   },
 
+  created() {
+    this.getAllHardware();
+  },
   methods: {
-    handleEditHardWare(row, text) {
-      row.name = text;
+    async getAllHardware() {
+      this.hardware = await hardwareApi.getAll();
+    },
+    async handleEditHardWare(row, text) {
+      if (await hardwareApi.updateHardwareName(row.devId, text) === true) {
+        row.name = text;
+      }
     },
     handleDeleteHardWare(index) {
       console.log(index);
     },
 
-    handleEditSpiltTitle(row, text) {
-      row.title = text;
+    async handleEditStateName(row, text) {
+      if (await hardwareApi.updateStateName(row.stateId, text) === true) {
+        row.name = text;
+      }
     },
 
     handleAddHardware() {
@@ -189,11 +150,11 @@ export default {
   filters: {
     friendlyType(type) {
       switch (type) {
-        case 0:
+        case 'ON_OFF':
           return '布尔型';
-        case 1:
+        case 'MODE':
           return '枚举型';
-        case 2:
+        case 'VALUE':
           return '数值型';
         default:
           return '未知';

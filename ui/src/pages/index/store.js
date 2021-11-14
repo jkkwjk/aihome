@@ -10,16 +10,16 @@ export default new Vuex.Store({
       moveY: null,
     },
     moveElement: {
-      devId: null,
+      stateId: null,
       width: '',
       height: '',
     },
     hardwareOverview: [
       {
         type: 0,
-        devId: 'aaaaa',
+        stateId: 'aaaaa',
         canControl: true,
-        title: '1',
+        name: '1',
         textActive: '开开开',
         textUnActive: '关了',
         state: false,
@@ -29,55 +29,36 @@ export default new Vuex.Store({
       },
       {
         type: 1,
-        devId: 'bbbbbb',
+        stateId: 'bbbbbb',
         canControl: true,
-        title: '2',
-        texts: {
+        name: '2',
+        options: {
           eco: {
+            modeText: '环保',
+            icon: 'el-icon-s-promotion',
+            color: '#54b022',
             text: '节能模式',
           },
           auto: {
+            modeText: '自动',
+            icon: 'el-icon-help',
+            color: '#539fb0',
             text: '自动模式',
           },
           power: {
+            modeText: '全力',
+            icon: 'el-icon-loading',
+            color: '#b05d3b',
             text: '强力模式',
           },
         },
-        icons: {
-          eco: {
-            icon: 'el-icon-s-promotion',
-            activeColor: '#54b022',
-          },
-          auto: {
-            icon: 'el-icon-help',
-            activeColor: '#539fb0',
-          },
-          power: {
-            icon: 'el-icon-loading',
-            activeColor: '#b05d3b',
-          },
-        },
-        stateOptions: [
-          {
-            text: '环保',
-            value: 'eco',
-          },
-          {
-            text: '自动',
-            value: 'auto',
-          },
-          {
-            text: '全力',
-            value: 'power',
-          },
-        ],
         state: 'eco',
       },
       {
         type: 0,
-        devId: 'aaaab',
+        stateId: 'aaaab',
         canControl: true,
-        title: '3',
+        name: '3',
         textActive: '开开开',
         textUnActive: '关了',
         state: false,
@@ -87,9 +68,9 @@ export default new Vuex.Store({
       },
       {
         type: 2,
-        devId: 'cccc',
+        stateId: 'cccc',
         canControl: true,
-        title: '4',
+        name: '4',
         text: '亮度调节',
         state: 40,
         icon: 'el-icon-s-opportunity',
@@ -102,9 +83,9 @@ export default new Vuex.Store({
       },
       {
         type: 0,
-        devId: 'aaaac',
+        stateId: 'aaaac',
         canControl: true,
-        title: '5',
+        name: '5',
         textActive: '开开开',
         textUnActive: '关了',
         state: false,
@@ -123,8 +104,8 @@ export default new Vuex.Store({
       state.mouse.moveX = value.x;
       state.mouse.moveY = value.y;
     },
-    setMoveDevId(state, moveDevId) {
-      state.moveElement.devId = moveDevId;
+    setMoveStateId(state, moveStateId) {
+      state.moveElement.stateId = moveStateId;
     },
     setMoveWidth(state, moveWidth) {
       state.moveElement.width = moveWidth;

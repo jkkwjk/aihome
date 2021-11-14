@@ -1,26 +1,28 @@
 package com.jkk.aihome.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.jkk.aihome.entity.DO.HardwareDO;
+import com.jkk.aihome.entity.VO.HardwareWithStateVO;
 import com.jkk.aihome.entity.request.AddHardWareRequest;
-import com.jkk.aihome.entity.vo.R;
+import com.jkk.aihome.entity.VO.R;
 import com.jkk.aihome.service.IHardwareService;
+import com.jkk.aihome.service.IStateService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/hardware")
 public class HardWareController {
 	private final IHardwareService hardwareService;
+	private final IStateService stateService;
 
-	public HardWareController(IHardwareService hardwareService) {
+	public HardWareController(IHardwareService hardwareService, IStateService stateService) {
 		this.hardwareService = hardwareService;
+		this.stateService = stateService;
 	}
 
 	@GetMapping
-	public R<String> getHardware() {
-		return R.ok(JSON.toJSONString(hardwareService.finAll()));
+	public R<List<HardwareWithStateVO>> getHardware() {
+		return R.ok(hardwareService.findAllHardwiredAndStates());
 	}
 
 	@DeleteMapping
@@ -30,26 +32,17 @@ public class HardWareController {
 
 	@PostMapping
 	public R<String> addHardware(AddHardWareRequest addHardWareRequest) {
-		HardwareDO hardwareDO = new HardwareDO();
-		hardwareDO.setDiscoverTime(new Date());
-		hardwareDO.setHeartTime(new Date());
-		hardwareDO.setDevId("test");
-		hardwareDO.setIcon("icon");
-		hardwareDO.setIp(addHardWareRequest.getIp());
-		hardwareDO.setName(addHardWareRequest.getName());
-
-		hardwareService.add(hardwareDO);
-		return R.ok("devid");
+		return null;
 	}
 
 	@PutMapping("/dev/{devId}")
-	public R<String> modifyDeviceName(@PathVariable String devId, String name) {
-		return R.ok("devid");
+	public R<Boolean> modifyDeviceName(@PathVariable String devId, String name) {
+		return R.ok(hardwareService.updateHardwareNameByDevId(devId, name));
 	}
 
 	@PutMapping("/state/{stateId}")
-	public R<String> modifyStateName(@PathVariable String stateId, String name) {
-		return R.ok("devid");
+	public R<Boolean> modifyStateName(@PathVariable String stateId, String name) {
+		return R.ok(stateService.updateStateNameByStateId(stateId, name));
 	}
 
 }

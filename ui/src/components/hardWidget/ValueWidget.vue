@@ -1,6 +1,6 @@
 <template>
   <el-col :sm="canShake? 6:12" :xs="12">
-    <widget :title="title" :dev-id="devId" :can-shake="canShake">
+    <widget :name="name" :state-id="stateId" :can-shake="canShake">
       <i :class="icon" :style="{'font-size': '50px', 'color': iconColor}" v-if="icon"></i>
       <span style="font-size: 17px;" v-if="text">{{ text }}</span>
       <el-slider v-model="state__inner"
@@ -28,9 +28,9 @@ export default {
   props: {
     canShake: { type: Boolean, required: false, default: true },
 
-    devId: { type: String, required: true },
+    stateId: { type: String, required: true },
     canControl: { type: Boolean, required: true },
-    title: { type: String, required: false },
+    name: { type: String, required: false },
     text: { type: String, required: false },
     state: { type: Number, required: true },
     icon: { type: String, required: false },

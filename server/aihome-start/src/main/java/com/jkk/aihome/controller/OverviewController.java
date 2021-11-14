@@ -1,6 +1,6 @@
 package com.jkk.aihome.controller;
 
-import com.jkk.aihome.entity.vo.R;
+import com.jkk.aihome.entity.VO.R;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

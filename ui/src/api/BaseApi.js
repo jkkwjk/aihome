@@ -3,7 +3,7 @@ import axios from '@/http/http';
  * TOFIX: 未测试!!
  * Create Time: 2020年11月17日18:55:18
  */
-class BaseApi {
+export default class BaseApi {
   constructor(prefix) {
     this.prefix = prefix;
   }

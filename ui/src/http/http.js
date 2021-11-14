@@ -22,11 +22,11 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use((res) => {
   const { data } = res;
 
-  if (data.code === 505) {
+  if (data.code === 1) {
     Message.error(data.msg == null ? '服务器未知错误' : data.msg);
   }
 
-  return data;
+  return data.data;
 }, (error) => {
   if (error.message.includes('timeout')) {
     Message.error('服务器响应超时');

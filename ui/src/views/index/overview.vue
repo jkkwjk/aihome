@@ -37,7 +37,7 @@ export default {
       hardwareWithOutOverview: [
         {
           type: 0,
-          devId: 'aaaaa',
+          stateId: 'aaaaa',
           canControl: true,
           title: '1',
           textActive: '开开开',
@@ -49,7 +49,7 @@ export default {
         },
         {
           type: 1,
-          devId: 'bbbbbb',
+          stateId: 'bbbbbb',
           canControl: true,
           title: '2',
           texts: {
@@ -95,7 +95,7 @@ export default {
         },
         {
           type: 0,
-          devId: 'aaaab',
+          stateId: 'aaaab',
           canControl: true,
           title: '3',
           textActive: '开开开',
@@ -107,7 +107,7 @@ export default {
         },
         {
           type: 2,
-          devId: 'cccc',
+          stateId: 'cccc',
           canControl: true,
           title: '4',
           text: '亮度调节',
@@ -123,7 +123,7 @@ export default {
       ],
       temp: {
         type: 999,
-        devId: 'tmp',
+        stateId: 'tmp',
       },
       originIndex: -1,
       addOverviewDialogVisible: false,
@@ -140,7 +140,7 @@ export default {
       if (moveToIndex >= this.hardwareOverview.length) {
         moveToIndex = this.hardwareOverview.length - 1;
       }
-      if (this.moveElement.devId != null) {
+      if (this.moveElement.stateId != null) {
         if (moveToIndex > this.originIndex) {
           this.hardwareOverview.splice(moveToIndex + 1, 0, this.temp);
         } else {
@@ -149,7 +149,7 @@ export default {
       } else if (this.originIndex !== -1) {
         if (this.originIndex !== moveToIndex) {
           console.log(`移动；${this.originIndex} -> ${moveToIndex}`);
-          console.log(this.hardwareOverview[this.originIndex].devId, this.hardwareOverview[moveToIndex].devId);
+          console.log(this.hardwareOverview[this.originIndex].stateId, this.hardwareOverview[moveToIndex].stateId);
         }
         this.originIndex = -1;
       }
@@ -165,11 +165,11 @@ export default {
     },
   },
   watch: {
-    'moveElement.devId': {
+    'moveElement.stateId': {
       handler() {
         // 防止闪烁
-        if (this.moveElement.devId != null) {
-          this.originIndex = this.hardwareOverview.findIndex((o) => o.devId === this.moveElement.devId);
+        if (this.moveElement.stateId != null) {
+          this.originIndex = this.hardwareOverview.findIndex((o) => o.stateId === this.moveElement.stateId);
           this.hardwareOverview.splice(this.originIndex, 0, this.temp);
         } else {
           this.hardwareOverview.removeEqual((o) => o.type === 999);

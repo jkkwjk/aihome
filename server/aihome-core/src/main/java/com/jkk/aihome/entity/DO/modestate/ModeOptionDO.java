@@ -16,7 +16,19 @@ public class ModeOptionDO {
 
 	private String stateId;
 
-	private String value;
+	private String modeValue;
 
+	/**
+	 * 友好的模式显示
+	 */
+	private String modeText;
+
+	/**
+	 * 主要显示文字
+	 */
 	private String text;
+
+	private String icon;
+
+	private String color;
 }

@@ -5,8 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HardwareStateRepository extends JpaRepository<HardwareStateDO, Integer> {
-	List<HardwareStateDO> findAllByDevId(String devId);
+	List<HardwareStateDO> findAllByDevIdOrderByReportTimeDesc(String devId);
+
+	HardwareStateDO findByStateId(String stateId);
+
+	Optional<HardwareStateDO> findFirstByDevIdOrderByIdDesc(String devId);
 }

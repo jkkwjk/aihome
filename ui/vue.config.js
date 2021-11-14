@@ -51,7 +51,8 @@ module.exports = {
       .set('@store', resolve('src/store'))
       .set('@layouts', resolve('src/layouts'))
       .set('@static', resolve('src/static'))
-      .set('@util', resolve('src/util'));
+      .set('@util', resolve('src/util'))
+      .set('@api', resolve('src/api'));
 
     if (IS_PROD) {
       // 使用cdn优化包大小
@@ -118,7 +119,7 @@ module.exports = {
     port: 3030,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080/api', //          /api/a -> ..8080/a,
+        target: 'http://localhost:8080', //          /api/a -> ..8080/a,
         pathRewrite: {
           '^/api': '/',
           // pathRewrite: {'^/api': '/'} 重写之后url为 http://192.168.1.16:8085/xxxx

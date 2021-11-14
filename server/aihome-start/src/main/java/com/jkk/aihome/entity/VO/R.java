@@ -1,4 +1,4 @@
-package com.jkk.aihome.entity.vo;
+package com.jkk.aihome.entity.VO;
 
 import lombok.Data;
 import lombok.Getter;

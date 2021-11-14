@@ -1,6 +1,6 @@
 <template>
   <el-col :sm="canShake? 6:12" :xs="12">
-    <widget :title="title" :dev-id="devId" :can-shake="canShake">
+    <widget :name="name" :state-id="stateId" :can-shake="canShake">
       <div style="margin-top: 5px;"></div>
       <i :class="icon" :style="{'font-size': '50px', 'color': state? iconActiveColor: iconUnActiveColor}" v-if="icon"></i>
       <span style="font-size: 17px;" v-if="textActive && textUnActive">{{ state? textActive: textUnActive }}</span>
@@ -19,9 +19,9 @@ export default {
   props: {
     canShake: { type: Boolean, required: false, default: true },
 
-    devId: { type: String, required: true },
+    stateId: { type: String, required: true },
     canControl: { type: Boolean, required: true },
-    title: { type: String, required: false },
+    name: { type: String, required: false },
     textActive: { type: String, required: false },
     textUnActive: { type: String, required: false },
     state: { type: Boolean, required: true },

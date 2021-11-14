@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 /**
  * 硬件和状态的映射表
@@ -21,9 +22,11 @@ public class HardwareStateDO {
 
 	private String stateId;
 
-	private String type;
+	private Integer type;
 
 	private Boolean canControl;
 
-	private String title;
+	private String name;
+
+	private Date reportTime;
 }

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ValueStateRepository extends JpaRepository<ValueStateDO, Integer> {
+	ValueStateDO findByStateId(String stateId);
 }

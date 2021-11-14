@@ -13,7 +13,7 @@
            :style="{ 'width': moveMe? this.$store.state.moveElement.width+'px':'unset',
            'left': this.$store.state.mouse.moveX - this.offset.x + 'px',
            'top': this.$store.state.mouse.moveY - this.offset.y + 'px' }">
-    <div slot="header" class="header" v-if="title">{{ title }}</div>
+    <div slot="header" class="header" v-if="name">{{ name }}</div>
     <div style="display: flex; flex-direction: column; align-items: center">
       <el-popconfirm
         confirm-button-text='好的'
@@ -41,8 +41,8 @@
 export default {
   name: 'widget',
   props: {
-    title: { type: String, required: false },
-    devId: { type: String, required: true },
+    name: { type: String, required: false },
+    stateId: { type: String, required: true },
     canShake: { type: Boolean, required: false, default: true },
   },
   data() {
@@ -55,7 +55,7 @@ export default {
 
   methods: {
     handleDeleteWidget() {
-      this.$store.state.hardwareOverview.removeEqual((o) => o.devId === this.devId);
+      this.$store.state.hardwareOverview.removeEqual((o) => o.stateId === this.stateId);
       this.$store.commit('setShake', false);
     },
 
@@ -67,7 +67,7 @@ export default {
         this.$store.commit('setMoveHeight', posr.clientHeight);
         this.offset.x = this.$store.state.mouse.moveX - posr.offsetLeft;
         this.offset.y = this.$store.state.mouse.moveY - posr.offsetTop;
-        this.$store.commit('setMoveDevId', this.devId);
+        this.$store.commit('setMoveStateId', this.stateId);
       } else {
         this.timeout = setTimeout(() => {
           this.$store.commit('setShake', true);
@@ -76,7 +76,7 @@ export default {
     },
 
     handleMouseUp() {
-      this.$store.commit('setMoveDevId', null);
+      this.$store.commit('setMoveStateId', null);
       // console.log('up');
       clearTimeout(this.timeout);
     },
@@ -91,7 +91,7 @@ export default {
       return this.$store.state.isShake;
     },
     moveMe() {
-      return this.$store.state.moveElement.devId === this.devId;
+      return this.$store.state.moveElement.stateId === this.stateId;
     },
   },
 
