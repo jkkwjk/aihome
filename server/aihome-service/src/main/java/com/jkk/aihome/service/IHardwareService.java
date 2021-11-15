@@ -8,4 +8,6 @@ public interface IHardwareService {
 	List<HardwareWithStateVO> findAllHardwiredAndStates();
 
 	Boolean updateHardwareNameByDevId(String devId, String name);
+
+	void deleteHardwareByDevId(String devId);
 }

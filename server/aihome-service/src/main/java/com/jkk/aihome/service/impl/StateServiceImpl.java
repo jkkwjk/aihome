@@ -10,8 +10,11 @@ import com.jkk.aihome.strategy.state.StateStrategy;
 import com.jkk.aihome.strategy.state.StateStrategyManagement;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,5 +64,20 @@ public class StateServiceImpl implements IStateService {
 		HardwareStateDO hardwareStateDO = hardwareStateRepository.findByStateId(stateId);
 		hardwareStateDO.setName(name);
 		return hardwareStateRepository.save(hardwareStateDO).getName().equals(name);
+	}
+
+	@Transactional
+	@Override
+	public void deleteAllStateByDevId(String devId) {
+		List<HardwareStateDO> hardwareStateDO = hardwareStateRepository.findAllByDevIdOrderByReportTimeDesc(devId);
+
+		hardwareStateDO.stream()
+				.collect(Collectors.groupingBy(HardwareStateDO::getType,
+						Collectors.mapping(HardwareStateDO::getStateId, Collectors.toList())))
+
+				.forEach((stateType, stateIds) ->
+						stateStrategyManagement.getStateStrategyByStateType(StateType.of(stateType)).deleteState(stateIds));
+
+		hardwareStateRepository.removeAllByDevId(devId);
 	}
 }

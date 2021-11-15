@@ -25,9 +25,10 @@ public class HardWareController {
 		return R.ok(hardwareService.findAllHardwiredAndStates());
 	}
 
-	@DeleteMapping
-	public R<String> deleteHardware() {
-		return R.ok("1");
+	@DeleteMapping("/{devId}")
+	public R<Boolean> deleteHardware(@PathVariable String devId) {
+		hardwareService.deleteHardwareByDevId(devId);
+		return R.ok(true);
 	}
 
 	@PostMapping

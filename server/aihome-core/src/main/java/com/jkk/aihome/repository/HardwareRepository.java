@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HardwareRepository extends JpaRepository<HardwareDO, Integer> {
 	HardwareDO findByDevId(String devId);
+
+	Integer removeByDevId(String devId);
 }

@@ -11,4 +11,6 @@ public interface IStateService {
 	List<StateDetailVO> findStateDetailVOByDevId(String devId);
 
 	Boolean updateStateNameByStateId(String stateId, String name);
+
+	void deleteAllStateByDevId(String devId);
 }

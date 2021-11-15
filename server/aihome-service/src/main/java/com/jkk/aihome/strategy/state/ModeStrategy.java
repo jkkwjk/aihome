@@ -103,4 +103,11 @@ public class ModeStrategy extends StateStrategy{
 		return modeStateDO.getId() != null && hardwareStateDO.getId() != null
 				&& modeOptionDOList.stream().allMatch(o -> o.getId() != null);
 	}
+
+	@Transactional
+	@Override
+	public Boolean deleteState(List<String> stateId) {
+		return modeOptionRepository.removeAllByStateIdIn(stateId) != 0
+				&& modeStateRepository.removeAllByStateIdIn(stateId) != 0;
+	}
 }

@@ -14,6 +14,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Component
 public class ValueStrategy extends StateStrategy{
 	private final ValueStateRepository valueStateRepository;
@@ -67,5 +69,10 @@ public class ValueStrategy extends StateStrategy{
 		HardwareStateDO hardwareStateDO = super.buildHardwareStateDOFromAddStateRequest(valueAddStateRequest, stateId, StateType.VALUE);
 		hardwareStateDO = hardwareStateRepository.save(hardwareStateDO);
 		return valueStateDO.getId() != null && hardwareStateDO.getId() != null;
+	}
+
+	@Override
+	public Boolean deleteState(List<String> stateId) {
+		return valueStateRepository.removeAllByStateIdIn(stateId) != 0;
 	}
 }

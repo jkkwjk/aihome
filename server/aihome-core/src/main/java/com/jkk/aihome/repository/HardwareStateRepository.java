@@ -14,4 +14,6 @@ public interface HardwareStateRepository extends JpaRepository<HardwareStateDO, 
 	HardwareStateDO findByStateId(String stateId);
 
 	Optional<HardwareStateDO> findFirstByDevIdOrderByIdDesc(String devId);
+
+	Integer removeAllByDevId(String devId);
 }

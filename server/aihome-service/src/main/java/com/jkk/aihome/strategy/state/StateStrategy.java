@@ -8,6 +8,7 @@ import com.jkk.aihome.repository.HardwareStateRepository;
 import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
+import java.util.List;
 
 
 public abstract class StateStrategy {
@@ -26,6 +27,8 @@ public abstract class StateStrategy {
 	public abstract String getShowInHardwareIcon(String stateId);
 
 	public abstract Boolean addState(AddStateRequest request);
+
+	public abstract Boolean deleteState(List<String> stateId);
 
 
 	protected String generateStateIdByDevId(String devId) {

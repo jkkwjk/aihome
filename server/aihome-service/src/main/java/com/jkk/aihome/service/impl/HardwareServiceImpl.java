@@ -8,6 +8,7 @@ import com.jkk.aihome.service.IStateService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,5 +41,12 @@ public class HardwareServiceImpl implements IHardwareService {
 		HardwareDO hardwareDO = hardwareRepository.findByDevId(devId);
 		hardwareDO.setName(name);
 		return hardwareRepository.save(hardwareDO).getName().equals(name);
+	}
+
+	@Transactional
+	@Override
+	public void deleteHardwareByDevId(String devId) {
+		hardwareRepository.removeByDevId(devId);
+		stateService.deleteAllStateByDevId(devId);
 	}
 }

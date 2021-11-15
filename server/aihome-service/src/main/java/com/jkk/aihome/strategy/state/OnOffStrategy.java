@@ -13,7 +13,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-// TODO: 2021/11/12 value和mode的策略, 策略管理器
+import java.util.List;
+
 @Component
 public class OnOffStrategy extends StateStrategy {
 	private final OnOffStateRepository onOffStateRepository;
@@ -65,5 +66,10 @@ public class OnOffStrategy extends StateStrategy {
 		HardwareStateDO hardwareStateDO = super.buildHardwareStateDOFromAddStateRequest(onOffAddStateRequest, stateId, StateType.ON_OFF);
 		hardwareStateDO = hardwareStateRepository.save(hardwareStateDO);
 		return onOffStateDO.getId() != null && hardwareStateDO.getId() != null;
+	}
+
+	@Override
+	public Boolean deleteState(List<String> stateId) {
+		return onOffStateRepository.removeAllByStateIdIn(stateId) != 0;
 	}
 }

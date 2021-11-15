@@ -114,15 +114,20 @@ export default {
     async handleEditHardWare(row, text) {
       if (await hardwareApi.updateHardwareName(row.devId, text) === true) {
         row.name = text;
+        this.$message.success('重命名成功');
       }
     },
-    handleDeleteHardWare(index) {
-      console.log(index);
+    async handleDeleteHardWare(index) {
+      if (await hardwareApi.remove(this.hardware[index].devId) === true) {
+        this.hardware.splice(index, 1);
+        this.$message.success('删除成功');
+      }
     },
 
     async handleEditStateName(row, text) {
       if (await hardwareApi.updateStateName(row.stateId, text) === true) {
         row.name = text;
+        this.$message.success('重命名成功');
       }
     },
 
