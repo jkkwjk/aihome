@@ -89,7 +89,7 @@
 <script>
 
 import EditableSpan from '@components/EditableSpan';
-import hardwareApi from '../../api/HardwareApi';
+import hardwareApi from '@api/HardwareApi';
 
 export default {
   name: 'hardManagement',

@@ -5,12 +5,14 @@ import com.jkk.aihome.entity.ValueConfig;
 import lombok.Data;
 
 @Data
-public class ValueStateDetailVO extends StateVO implements StateDetailVO {
+public class ValueStateDetailVO extends StateDetailVO {
 	private String text;
 
-	private Boolean canControl;
+	private String icon;
 
 	private String iconColorForMax;
 
 	private ValueConfig config;
+
+	private Integer state;
 }

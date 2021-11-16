@@ -19,6 +19,18 @@ Vue.prototype.$echarts = echarts;
 Vue.prototype.$store = store;
 Vue.prototype.$http = axios;
 
+// 全局message配置（取配置项）
+Vue.prototype.$message = function (msg) {
+  ElementUI.Message(msg);
+};
+Vue.prototype.$message.success = function (message) {
+  return ElementUI.Message.success({
+    message,
+    offset: 10,
+    duration: 1000,
+  });
+};
+
 new Vue({
   store,
   router,

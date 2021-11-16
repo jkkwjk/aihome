@@ -8,9 +8,7 @@ import lombok.Data;
 import java.util.Map;
 
 @Data
-public class ModeStateDetailVO extends StateVO implements StateDetailVO {
-	private Boolean canControl;
-
+public class ModeStateDetailVO extends StateDetailVO {
 	private Map<String, ModeOption> options;
 
 	private String state;

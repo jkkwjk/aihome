@@ -1,17 +1,18 @@
 package com.jkk.aihome.entity.VO.state;
 
-import com.jkk.aihome.entity.VO.StateVO;
 import lombok.Data;
 
 @Data
-public class OnOffStateDetailVO extends StateVO implements StateDetailVO {
+public class OnOffStateDetailVO extends StateDetailVO {
 	private String textActive;
 
 	private String textUnActive;
 
-	private Boolean canControl;
+	private String icon;
 
 	private String iconActiveColor;
 
 	private String iconUnActiveColor;
+
+	private Boolean state;
 }

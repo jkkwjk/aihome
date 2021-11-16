@@ -37,9 +37,12 @@ public class ValueStrategy extends StateStrategy{
 
 		ValueStateDO valueStateDO = valueStateRepository.findByStateId(stateId);
 		BeanUtils.copyProperties(valueStateDO, valueStateDetailVO);
+		ValueConfig valueConfig = new ValueConfig();
+		BeanUtils.copyProperties(valueStateDO, valueConfig);
 
 		valueStateDetailVO.setType(StateType.VALUE);
-		valueStateDetailVO.setState(valueStateDO.getState().toString());
+		valueStateDetailVO.setState(valueStateDO.getState());
+		valueStateDetailVO.setConfig(valueConfig);
 		return valueStateDetailVO;
 	}
 

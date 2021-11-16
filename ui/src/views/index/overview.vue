@@ -1,11 +1,12 @@
 <template>
   <div class="overview">
     <el-row class="tool-bar"
-    :style="{'margin-top': $store.state.isShake? '0':'-30px'}">
-      <alpha-button icon="el-icon-plus" round size="mini" @click="addOverviewDialogVisible=true"/>
+    :style="{'margin-top': $store.state.isShake || $store.state.hardwareOverview.length === 0? '0':'-30px'}">
+      <alpha-button icon="el-icon-plus" round size="mini" @click="handleOpenAddOverviewDialog"/>
       <alpha-button style="float: right"
                     round
                     size="mini"
+                    v-if="$store.state.hardwareOverview.length !== 0"
                     @click="$store.commit('setShake', false)">完成</alpha-button>
     </el-row>
 
@@ -16,7 +17,7 @@
     <el-dialog title="添加到概览"
                :visible.sync="addOverviewDialogVisible">
       <el-row :gutter="10">
-        <all-widget :can-shake="false" :hardware="hardwareWithOutOverview"></all-widget>
+        <all-widget :can-shake="false" :hardware="hardwareWithOutOverview" @click="handleAddOverview"></all-widget>
       </el-row>
     </el-dialog>
   </div>
@@ -25,6 +26,7 @@
 
 <script>
 import AllWidget from '@components/hardWidget/AllWidget';
+import overviewApi from '@api/OverviewApi';
 import AlphaButton from '../../components/AlphaButton';
 
 export default {
@@ -32,97 +34,14 @@ export default {
   components: {
     AllWidget, AlphaButton,
   },
+  async created() {
+    this.$store.commit('setHardwareOverview', await overviewApi.getAll());
+  },
   data() {
     return {
-      hardwareWithOutOverview: [
-        {
-          type: 0,
-          stateId: 'aaaaa',
-          canControl: true,
-          title: '1',
-          textActive: '开开开',
-          textUnActive: '关了',
-          state: false,
-          icon: 'el-icon-switch-button',
-          iconActiveColor: '#000000',
-          iconUnActiveColor: '#aabbcc',
-        },
-        {
-          type: 1,
-          stateId: 'bbbbbb',
-          canControl: true,
-          title: '2',
-          texts: {
-            eco: {
-              text: '节能模式',
-            },
-            auto: {
-              text: '自动模式',
-            },
-            power: {
-              text: '强力模式',
-            },
-          },
-          icons: {
-            eco: {
-              icon: 'el-icon-s-promotion',
-              activeColor: '#54b022',
-            },
-            auto: {
-              icon: 'el-icon-help',
-              activeColor: '#539fb0',
-            },
-            power: {
-              icon: 'el-icon-loading',
-              activeColor: '#b05d3b',
-            },
-          },
-          stateOptions: [
-            {
-              text: '环保',
-              value: 'eco',
-            },
-            {
-              text: '自动',
-              value: 'auto',
-            },
-            {
-              text: '全力',
-              value: 'power',
-            },
-          ],
-          state: 'eco',
-        },
-        {
-          type: 0,
-          stateId: 'aaaab',
-          canControl: true,
-          title: '3',
-          textActive: '开开开',
-          textUnActive: '关了',
-          state: false,
-          icon: 'el-icon-switch-button',
-          iconActiveColor: '#000000',
-          iconUnActiveColor: '#aabbcc',
-        },
-        {
-          type: 2,
-          stateId: 'cccc',
-          canControl: true,
-          title: '4',
-          text: '亮度调节',
-          state: 40,
-          icon: 'el-icon-s-opportunity',
-          iconColorForMax: '#8bb9eb',
-          config: {
-            min: 1,
-            max: 100,
-            step: 1,
-          },
-        },
-      ],
+      hardwareWithOutOverview: [],
       temp: {
-        type: 999,
+        type: 'TMP',
         stateId: 'tmp',
       },
       originIndex: -1,
@@ -130,12 +49,22 @@ export default {
     };
   },
   methods: {
+    async handleAddOverview(stateId) {
+      const detailView = await overviewApi.add({ stateId });
+      this.$message.success('添加成功');
+      this.addOverviewDialogVisible = false;
+      this.$store.state.hardwareOverview.push(detailView);
+    },
+    async handleOpenAddOverviewDialog() {
+      this.hardwareWithOutOverview = await overviewApi.getUnAddOverview();
+      this.addOverviewDialogVisible = true;
+    },
     handleMouseMove(e) {
       const posr = this.$refs.posr.$el;
       const x = e.clientX - posr.offsetLeft;
       const y = e.clientY - posr.offsetTop;
       let moveToIndex = parseInt(y / (this.moveElement.height + 10), 10) * 4 + parseInt(x / (this.moveElement.width + 10), 10);
-      this.hardwareOverview.removeEqual((o) => o.type === 999);
+      this.hardwareOverview.removeEqual((o) => o.type === 'TMP');
 
       if (moveToIndex >= this.hardwareOverview.length) {
         moveToIndex = this.hardwareOverview.length - 1;
@@ -172,7 +101,7 @@ export default {
           this.originIndex = this.hardwareOverview.findIndex((o) => o.stateId === this.moveElement.stateId);
           this.hardwareOverview.splice(this.originIndex, 0, this.temp);
         } else {
-          this.hardwareOverview.removeEqual((o) => o.type === 999);
+          this.hardwareOverview.removeEqual((o) => o.type === 'TMP');
         }
       },
     },

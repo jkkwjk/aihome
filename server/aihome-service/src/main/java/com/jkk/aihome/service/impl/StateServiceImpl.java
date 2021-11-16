@@ -12,9 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,13 +48,20 @@ public class StateServiceImpl implements IStateService {
 	public List<StateDetailVO> findStateDetailVOByDevId(String devId) {
 		List<HardwareStateDO> hardwareStateDOList = hardwareStateRepository.findAllByDevIdOrderByReportTimeDesc(devId);
 
-		return hardwareStateDOList.stream().map(hardwareStateDO -> {
-			String stateId = hardwareStateDO.getStateId();
-			StateType stateType = StateType.of(hardwareStateDO.getType());
+		return hardwareStateDOList.stream().map(hardwareStateDO ->
+				this.findStateDetailVOByStateIdAndType(hardwareStateDO.getStateId(), StateType.of(hardwareStateDO.getType()))).collect(Collectors.toList());
+	}
 
-			StateStrategy stateStrategy = stateStrategyManagement.getStateStrategyByStateType(stateType);
-			return stateStrategy.getDetailByStateId(stateId);
-		}).collect(Collectors.toList());
+	@Override
+	public StateDetailVO findStateDetailVOByStateIdAndType(String stateId, StateType stateType) {
+		StateStrategy stateStrategy = stateStrategyManagement.getStateStrategyByStateType(stateType);
+		return stateStrategy.getDetailByStateId(stateId);
+	}
+
+	@Override
+	public StateDetailVO findStateDetailVOByStateId(String stateId) {
+		StateStrategy stateStrategy = stateStrategyManagement.getStateStrategyByStateId(stateId);
+		return stateStrategy.getDetailByStateId(stateId);
 	}
 
 	@Override

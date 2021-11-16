@@ -38,7 +38,7 @@ public class OnOffStrategy extends StateStrategy {
 		BeanUtils.copyProperties(onOffStateDO, onOffStateDetailVO);
 
 		onOffStateDetailVO.setType(StateType.ON_OFF);
-		onOffStateDetailVO.setState(onOffStateDO.getState().toString());
+		onOffStateDetailVO.setState(onOffStateDO.getState());
 		return onOffStateDetailVO;
 	}
 

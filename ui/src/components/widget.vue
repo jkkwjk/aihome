@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import overviewApi from '@api/OverviewApi';
 
 export default {
   name: 'widget',
@@ -54,9 +55,11 @@ export default {
   },
 
   methods: {
-    handleDeleteWidget() {
-      this.$store.state.hardwareOverview.removeEqual((o) => o.stateId === this.stateId);
-      this.$store.commit('setShake', false);
+    async handleDeleteWidget() {
+      if (await overviewApi.remove(this.stateId) === true) {
+        this.$message.success('删除成功');
+        this.$store.state.hardwareOverview.removeEqual((o) => o.stateId === this.stateId);
+      }
     },
 
     handleMouseDown() {

@@ -1,24 +1,34 @@
 package com.jkk.aihome.controller;
 
 import com.jkk.aihome.entity.VO.R;
+import com.jkk.aihome.entity.VO.state.StateDetailVO;
+import com.jkk.aihome.service.IOverviewService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/overview")
 public class OverviewController {
+	private final IOverviewService overviewService;
+
+	public OverviewController(IOverviewService overviewService) {
+		this.overviewService = overviewService;
+	}
+
 	@GetMapping
-	public R<String> getOverview() {
-		return R.ok("2313");
+	public R<List<StateDetailVO>> getAddedOverview() {
+		return R.ok(overviewService.getAddedOverview());
 	}
 
 	@GetMapping("/unadd")
-	public R<String> getUnAddOverview() {
-		return R.ok("2313");
+	public R<List<StateDetailVO>> getUnAddOverview() {
+		return R.ok(overviewService.getUnAddOverview());
 	}
 
 	@PostMapping
-	public R<String> addOverview() {
-		return R.ok("2313");
+	public R<StateDetailVO> addOverview(String stateId) {
+		return R.ok(overviewService.addLastByStateId(stateId));
 	}
 
 	@PutMapping
@@ -27,7 +37,8 @@ public class OverviewController {
 	}
 
 	@DeleteMapping("/{stateId}")
-	public R<String> deleteOverview(@PathVariable String stateId) {
-		return R.ok("2313");
+	public R<Boolean> deleteOverview(@PathVariable String stateId) {
+		overviewService.deleteOverviewByStateId(stateId);
+		return R.ok(true);
 	}
 }
