@@ -1,6 +1,6 @@
-package com.jkk.aihome.core;
+package com.jkk.aihome.hardware.core;
 
-import com.jkk.aihome.model.AppUser;
+import com.jkk.aihome.hardware.model.AppUser;
 
 import java.util.List;
 import java.util.Observable;

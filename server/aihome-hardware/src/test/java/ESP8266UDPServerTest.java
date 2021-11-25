@@ -1,7 +1,7 @@
-import com.jkk.aihome.core.ESP8266UDPServer;
-import com.jkk.aihome.core.UDPHandleProcess;
-import com.jkk.aihome.model.AppUser;
-import com.jkk.aihome.model.HandleResult;
+import com.jkk.aihome.hardware.core.ESP8266UDPServer;
+import com.jkk.aihome.hardware.core.UDPHandleProcess;
+import com.jkk.aihome.hardware.model.AppUser;
+import com.jkk.aihome.hardware.model.HandleResult;
 import org.junit.Before;
 import org.junit.Test;
 

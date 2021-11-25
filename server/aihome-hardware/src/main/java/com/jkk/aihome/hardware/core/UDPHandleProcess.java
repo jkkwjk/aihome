@@ -1,7 +1,7 @@
-package com.jkk.aihome.core;
+package com.jkk.aihome.hardware.core;
 
-import com.jkk.aihome.model.AppUser;
-import com.jkk.aihome.model.HandleResult;
+import com.jkk.aihome.hardware.model.AppUser;
+import com.jkk.aihome.hardware.model.HandleResult;
 
 public interface UDPHandleProcess {
 	/**

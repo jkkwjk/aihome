@@ -1,4 +1,4 @@
-package com.jkk.aihome.exception;
+package com.jkk.aihome.hardware.exception;
 
 public class AppNameRepeatException extends RuntimeException{
 	private String repeatAppName;

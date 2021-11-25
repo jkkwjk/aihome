@@ -1,4 +1,4 @@
-package com.jkk.aihome.model;
+package com.jkk.aihome.hardware.model;
 
 import java.net.InetAddress;
 import java.util.Objects;
