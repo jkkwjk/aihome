@@ -15,9 +15,9 @@ public enum StateType {
 	;
 
 
-	private Integer type;
+	private final Integer type;
 
-	private String description;
+	private final String description;
 
 	public static StateType of(Integer type) {
 		return Arrays.stream(StateType.values())
