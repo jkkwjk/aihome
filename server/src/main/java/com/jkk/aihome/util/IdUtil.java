@@ -1,12 +1,17 @@
 package com.jkk.aihome.util;
 
 public class IdUtil {
-	public static String generateDevId() {
-		return null;
-	}
+	private final static String dict = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-	public static String generateStateId(String devId) {
-		return null;
+	public static String generateDevId() {
+		long time = System.nanoTime();
+		int radix = dict.length() - 1;
+		StringBuilder result = new StringBuilder();
+		while(time > 0) {
+			result.append(dict.charAt((int) (time % radix)));
+			time /= radix;
+		}
+		return result.toString();
 	}
 
 	public static String getDevIdFromStateId(String stateId) {

@@ -9,7 +9,7 @@ function connNotSucess(s, t)
     dofile("firstconn.lua")
     t:unregister()
 end
-
+file.remove("mqtt.config")
 if file.exists("wifi.config") then
     if file.open("wifi.config", "r") then
         local ssid = string.gsub(file.readline(), '\n', '')
@@ -41,10 +41,6 @@ if file.exists("wifi.config") then
                     dofile("udp_process.lua")
                 end
                 
-            end
-            
-            if (tmr.now() - startConnectTime > 20000000) then
-                connNotSucess("connect timeout", t)
             end
         end)
         

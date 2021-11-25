@@ -18,6 +18,6 @@ udptimer:alarm(5000, tmr.ALARM_AUTO, function (t)
         udpSocket:close()
         t:unregister()
     else
-        udpSocket:send(23333, "255.255.255.255", "aihome connect-request")
+        udpSocket:send(23333, "255.255.255.255", "aihome-connect")
     end
 end)
