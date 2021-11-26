@@ -1,6 +1,7 @@
 package com.jkk.aihome.strategy.subscribe;
 
 import com.alibaba.fastjson.JSON;
+import com.jkk.aihome.aspect.ReceiveMsgNotPCSend;
 import com.jkk.aihome.entity.VO.R;
 import com.jkk.aihome.enums.TopicNameEnum;
 import com.jkk.aihome.hardware.request.GetDevIdRequest;
@@ -26,15 +27,15 @@ public class DevSubscribeStrategy implements SubscribeStrategy {
 	}
 
 	@Override
+	@ReceiveMsgNotPCSend
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		String data = new String(message.getPayload());
-		if (MessageUtil.judgeSendByPC(data)) {
-			GetDevIdRequest getDevIdRequest = JSON.parseObject(new String(data), GetDevIdRequest.class);
+		GetDevIdRequest getDevIdRequest = JSON.parseObject(data, GetDevIdRequest.class);
 
-			GetDevIdResponse getDevIdResponse = new GetDevIdResponse();
-			getDevIdResponse.setId(getDevIdRequest.getId());
-			getDevIdResponse.setDevId(IdUtil.generateDevId());
-			mqttClient.publish(topic, JSON.toJSONString(R.ok(getDevIdResponse)).getBytes(), 1, false);
-		}
+		GetDevIdResponse getDevIdResponse = new GetDevIdResponse();
+		getDevIdResponse.setId(getDevIdRequest.getId());
+		getDevIdResponse.setDevId(IdUtil.generateDevId());
+		mqttClient.publish(topic, JSON.toJSONString(R.ok(getDevIdResponse)).getBytes(), 1, false);
+
 	}
 }
