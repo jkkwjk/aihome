@@ -1,9 +1,9 @@
 package com.jkk.aihome.controller;
 
 import com.jkk.aihome.entity.VO.HardwareWithStateVO;
-import com.jkk.aihome.entity.request.AddHardWareRequest;
 import com.jkk.aihome.entity.VO.R;
 import com.jkk.aihome.service.IHardwareService;
+import com.jkk.aihome.service.IMqttService;
 import com.jkk.aihome.service.IStateService;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +14,12 @@ import java.util.List;
 public class HardWareController {
 	private final IHardwareService hardwareService;
 	private final IStateService stateService;
+	private final IMqttService mqttService;
 
-	public HardWareController(IHardwareService hardwareService, IStateService stateService) {
+	public HardWareController(IHardwareService hardwareService, IStateService stateService, IMqttService mqttService) {
 		this.hardwareService = hardwareService;
 		this.stateService = stateService;
+		this.mqttService = mqttService;
 	}
 
 	@GetMapping
@@ -32,8 +34,9 @@ public class HardWareController {
 	}
 
 	@PostMapping
-	public R<String> addHardware(AddHardWareRequest addHardWareRequest) {
-		return null;
+	public R<Boolean> addHardware(String messageId) {
+		mqttService.sendDevId(messageId);
+		return R.ok(true);
 	}
 
 	@PutMapping("/dev/{devId}")

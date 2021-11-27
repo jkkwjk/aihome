@@ -4,7 +4,7 @@ import com.jkk.aihome.enums.StateType;
 import lombok.Data;
 
 @Data
-public abstract class AddStateRequest {
+public class AddStateRequest {
 	private String devId;
 
 	private StateType stateType;

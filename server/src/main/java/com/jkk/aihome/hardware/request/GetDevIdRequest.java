@@ -7,4 +7,6 @@ public class GetDevIdRequest {
 	private String id;
 
 	private String mac;
+
+	private String name;
 }

@@ -1,4 +1,4 @@
-package com.jkk.aihome.hardware.configurator;
+package com.jkk.aihome.configurator;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

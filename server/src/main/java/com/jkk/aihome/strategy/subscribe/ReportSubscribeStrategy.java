@@ -7,7 +7,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReportSubscribeStrategy implements SubscribeStrategy {
+public class ReportSubscribeStrategy extends SubscribeStrategy {
 	@Override
 	public TopicNameEnum getMatchTopic() {
 		return TopicNameEnum.REPORT;

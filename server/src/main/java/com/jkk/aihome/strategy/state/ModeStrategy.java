@@ -1,7 +1,6 @@
 package com.jkk.aihome.strategy.state;
-import java.util.Date;
-import java.util.HashMap;
 
+import com.alibaba.fastjson.JSON;
 import com.jkk.aihome.entity.DO.HardwareStateDO;
 import com.jkk.aihome.entity.DO.modestate.ModeOptionDO;
 import com.jkk.aihome.entity.DO.modestate.ModeStateDO;
@@ -102,6 +101,12 @@ public class ModeStrategy extends StateStrategy{
 
 		return modeStateDO.getId() != null && hardwareStateDO.getId() != null
 				&& modeOptionDOList.stream().allMatch(o -> o.getId() != null);
+	}
+
+	@Override
+	public Boolean addState(String stateJson, String devId) {
+		ModeAddStateRequest modeAddStateRequest = JSON.parseObject(stateJson, ModeAddStateRequest.class);
+		return this.addState(modeAddStateRequest);
 	}
 
 	@Transactional

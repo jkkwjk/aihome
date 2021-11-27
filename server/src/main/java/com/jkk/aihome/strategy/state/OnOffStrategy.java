@@ -1,10 +1,12 @@
 package com.jkk.aihome.strategy.state;
 
+import com.alibaba.fastjson.JSON;
 import com.jkk.aihome.entity.DO.HardwareStateDO;
 import com.jkk.aihome.entity.DO.OnOffStateDO;
 import com.jkk.aihome.entity.VO.state.OnOffStateDetailVO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
 import com.jkk.aihome.entity.request.state.AddStateRequest;
+import com.jkk.aihome.entity.request.state.ModeAddStateRequest;
 import com.jkk.aihome.entity.request.state.OnOffAddStateRequest;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.repository.HardwareStateRepository;
@@ -66,6 +68,13 @@ public class OnOffStrategy extends StateStrategy {
 		HardwareStateDO hardwareStateDO = super.buildHardwareStateDOFromAddStateRequest(onOffAddStateRequest, stateId, StateType.ON_OFF);
 		hardwareStateDO = hardwareStateRepository.save(hardwareStateDO);
 		return onOffStateDO.getId() != null && hardwareStateDO.getId() != null;
+	}
+
+	@Override
+	public Boolean addState(String stateJson, String devId) {
+		OnOffAddStateRequest onOffAddStateRequest = JSON.parseObject(stateJson, OnOffAddStateRequest.class);
+		onOffAddStateRequest.setDevId(devId);
+		return this.addState(onOffAddStateRequest);
 	}
 
 	@Override

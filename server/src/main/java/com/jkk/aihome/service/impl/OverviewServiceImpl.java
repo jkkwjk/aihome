@@ -1,5 +1,6 @@
 package com.jkk.aihome.service.impl;
 
+import com.jkk.aihome.entity.DO.HardwareStateDO;
 import com.jkk.aihome.entity.DO.OverviewDO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
 import com.jkk.aihome.enums.StateType;
@@ -108,5 +109,13 @@ public class OverviewServiceImpl implements IOverviewService {
 		}
 
 		overviewRepository.delete(overviewDO);
+	}
+
+	@Transactional
+	@Override
+	public void deleteAllOverviewByDevId(String devId) {
+		hardwareStateRepository.findAllByDevIdOrderByReportTimeDesc(devId).stream()
+				.map(HardwareStateDO::getStateId)
+				.forEach(this::deleteOverviewByStateId);
 	}
 }

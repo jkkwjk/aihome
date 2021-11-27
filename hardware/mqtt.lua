@@ -1,10 +1,8 @@
 mqttClient = nil -- udp used
-local isFirstConn = false
 mqtt_config = nil -- handleMqttMessage used
 
 dofile("handleMqttMessage.lua")
 function mqtt_first_init(mqtt_config)
-    isFirstConn = true
     if file.open("mqtt.config", "w") then
         file.write(mqtt_config)
         file.flush()
@@ -26,10 +24,16 @@ function mqtt_init()
         
         mqttClient:on("message", function(client, topic, data)
             local fSwitch = handleMessageFunction[topic]
-            print(data)
---            local reposion = sjson.decode(data)
+            local reposion = sjson.decode(data)
             if fSwitch then --key exists  
-                local result = fSwitch(reposion) --do func  
+                if reposion.code ~= nil then
+                    if (reposion.code ~= 0) then
+                        print("error from server:" .. reposion.msg)
+                    elseif canProcess(reposion.data.id) then
+                        local result = fSwitch(reposion.data) --do func 
+                    end
+                end
+                 
             else --key not found  
                 print("not support topic: " .. topic)
             end
@@ -47,29 +51,25 @@ end
 
 function connectSuccess()
     print("connect")
-    if(isFirstConn) then
-        payload = {
-            mac = wifi.sta.getmac()
-        }
+    if(mqtt_config.devId == nil) then
         -- get DevId
         mqttClient:subscribe(mqtt_config.topic.DEV,1)
-        send(mqtt_config.topic.DEV, payload)
     else
 --        reconnect
     end
     
 end
 
-
-
-function send(topic, msg)
-    if (mqtt_config.devId == nil) then
-        msg["id"] = wifi.sta.getmac() .. tmr.now()
+function canProcess(id)
+    local len = #id;
+    if (string.find(id, ":") ~= nil) then
+        local mac = string.sub(id, 1, 17)
+        return mac == wifi.sta.getmac()
+    elseif (len >= 7) then
+        local msgDevId = string.sub(id, 1, 7)
+        return mqtt_config.devId == msgDevId
     else
-        msg["id"] = mqtt_config.devId.. tmr.now()
+        return len == 1
     end
-    mqttClient:publish(topic, sjson.encode(msg), 1, 0)
 end
---mqtt_init()
---mqtt_first_init("{\"mqttAddress\":\"192.168.0.109\",\"mqttPort\":1883,\"topic\":{\"discover\": \"discover\",\"online\": \"online\"}}")
 

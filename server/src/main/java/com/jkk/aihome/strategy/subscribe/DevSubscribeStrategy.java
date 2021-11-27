@@ -2,20 +2,18 @@ package com.jkk.aihome.strategy.subscribe;
 
 import com.alibaba.fastjson.JSON;
 import com.jkk.aihome.aspect.ReceiveMsgNotPCSend;
-import com.jkk.aihome.entity.VO.R;
 import com.jkk.aihome.enums.TopicNameEnum;
 import com.jkk.aihome.hardware.request.GetDevIdRequest;
-import com.jkk.aihome.hardware.response.GetDevIdResponse;
-import com.jkk.aihome.util.IdUtil;
-import com.jkk.aihome.util.MessageUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
-public class DevSubscribeStrategy implements SubscribeStrategy {
+public class DevSubscribeStrategy extends SubscribeStrategy {
 	@Lazy
 	@Autowired
 	private MqttClient mqttClient;
@@ -29,13 +27,7 @@ public class DevSubscribeStrategy implements SubscribeStrategy {
 	@Override
 	@ReceiveMsgNotPCSend
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		String data = new String(message.getPayload());
-		GetDevIdRequest getDevIdRequest = JSON.parseObject(data, GetDevIdRequest.class);
-
-		GetDevIdResponse getDevIdResponse = new GetDevIdResponse();
-		getDevIdResponse.setId(getDevIdRequest.getId());
-		getDevIdResponse.setDevId(IdUtil.generateDevId());
-		mqttClient.publish(topic, JSON.toJSONString(R.ok(getDevIdResponse)).getBytes(), 1, false);
-
+		this.setChanged();
+		this.notifyObservers(JSON.parseObject(String.valueOf(message), GetDevIdRequest.class));
 	}
 }

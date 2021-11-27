@@ -13,7 +13,7 @@ public class HardwareWithStateVO {
 
 	private String name;
 
-	private String ip;
+	private String mac;
 
 	private Date heartTime;
 

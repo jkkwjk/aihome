@@ -1,5 +1,6 @@
 package com.jkk.aihome.strategy.state;
 
+import com.alibaba.fastjson.JSON;
 import com.jkk.aihome.entity.DO.HardwareStateDO;
 import com.jkk.aihome.entity.DO.ValueStateDO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
@@ -72,6 +73,12 @@ public class ValueStrategy extends StateStrategy{
 		HardwareStateDO hardwareStateDO = super.buildHardwareStateDOFromAddStateRequest(valueAddStateRequest, stateId, StateType.VALUE);
 		hardwareStateDO = hardwareStateRepository.save(hardwareStateDO);
 		return valueStateDO.getId() != null && hardwareStateDO.getId() != null;
+	}
+
+	@Override
+	public Boolean addState(String stateJson, String devId) {
+		ValueAddStateRequest valueAddStateRequest = JSON.parseObject(stateJson, ValueAddStateRequest.class);
+		return this.addState(valueAddStateRequest);
 	}
 
 	@Override

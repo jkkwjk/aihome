@@ -4,6 +4,8 @@ import com.jkk.aihome.enums.TopicNameEnum;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public interface SubscribeStrategy extends IMqttMessageListener {
-	TopicNameEnum getMatchTopic();
+import java.util.Observable;
+
+public abstract class SubscribeStrategy extends Observable implements IMqttMessageListener {
+	public abstract TopicNameEnum getMatchTopic();
 }

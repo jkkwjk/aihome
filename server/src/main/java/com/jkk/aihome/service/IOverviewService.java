@@ -16,4 +16,6 @@ public interface IOverviewService {
 	StateDetailVO addLastByStateId(String stateId);
 
 	void deleteOverviewByStateId(String stateId);
+
+	void deleteAllOverviewByDevId(String devId);
 }

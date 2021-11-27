@@ -1,5 +1,6 @@
 package com.jkk.aihome.strategy.subscribe;
 
+import com.jkk.aihome.enums.TopicNameEnum;
 import com.jkk.aihome.exception.MqttRuntimeException;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -21,5 +22,9 @@ public class SubscribeStrategyManagement implements ApplicationContextAware {
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		subscribeStrategies = applicationContext.getBeansOfType(SubscribeStrategy.class).values();
+	}
+
+	public SubscribeStrategy getSubscribeStrategyByName(TopicNameEnum topicNameEnum) {
+		return subscribeStrategies.stream().filter(strategy -> strategy.getMatchTopic().equals(topicNameEnum)).findFirst().orElse(null);
 	}
 }

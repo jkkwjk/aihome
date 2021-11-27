@@ -1,4 +1,4 @@
-package com.jkk.aihome.hardware.configurator;
+package com.jkk.aihome.configurator;
 
 import com.jkk.aihome.entity.config.MqttConfig;
 import com.jkk.aihome.exception.MqttRuntimeException;

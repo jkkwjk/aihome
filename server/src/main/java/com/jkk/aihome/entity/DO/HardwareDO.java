@@ -21,7 +21,7 @@ public class HardwareDO {
 
 	private String icon;
 
-	private String ip;
+	private String mac;
 
 	private Date discoverTime;
 

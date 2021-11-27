@@ -18,4 +18,6 @@ public interface IStateService {
 	Boolean updateStateNameByStateId(String stateId, String name);
 
 	void deleteAllStateByDevId(String devId);
+
+	Boolean addState(String stateJson, String devId);
 }

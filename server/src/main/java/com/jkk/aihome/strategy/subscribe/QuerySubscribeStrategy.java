@@ -6,7 +6,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QuerySubscribeStrategy implements SubscribeStrategy {
+public class QuerySubscribeStrategy extends SubscribeStrategy {
 	@Override
 	public TopicNameEnum getMatchTopic() {
 		return TopicNameEnum.QUERY;

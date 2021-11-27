@@ -42,7 +42,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="devId" label="设备ID" width="100" />
-      <el-table-column prop="ip" label="设备IP" width="140" />
+      <el-table-column prop="mac" label="设备MAC" width="140" />
       <el-table-column prop="heartTime" sortable width="180" label="最后一次心跳时间" />
       <el-table-column prop="discoverTime" sortable width="180" label="设备发现时间" />
       <el-table-column align="right">
@@ -73,7 +73,7 @@
         empty-text="重置设备后连接至aihome开头的WiFi中，访问setup.com网页按步骤完成">
         <el-table-column type="selection" width="45"></el-table-column>
         <el-table-column property="name" label="设备名称"></el-table-column>
-        <el-table-column property="ip" label="设备ip"></el-table-column>
+        <el-table-column property="mac" label="设备mac"></el-table-column>
       </el-table>
 
       <span slot="footer">
@@ -101,10 +101,19 @@ export default {
       selectNewHardware: [],
       searchText: '',
       discoverDialogVisible: false,
+      discoverSocket: null,
     };
   },
 
   created() {
+    const discoverSocket = new WebSocket(`ws://${process.env.VUE_APP_WEBSOCKET}/ws/dev`);
+    discoverSocket.onmessage = (data) => {
+      const socketData = JSON.parse(data.data);
+      this.newHardware = socketData.data;
+      console.log(socketData.data[0]);
+    };
+
+    this.discoverSocket = discoverSocket;
     this.getAllHardware();
   },
   methods: {
@@ -132,19 +141,16 @@ export default {
     },
 
     handleAddHardware() {
-      console.log(this.selectNewHardware);
+      this.selectNewHardware.map((o) => {
+        hardwareApi.add({ messageId: o.id });
+      });
       this.discoverDialogVisible = false;
+      this.$message.success('请稍等...正在添加');
     },
 
     beforeDiscover() {
-      this.newHardware = [{
-        name: '新设备',
-        ip: '255.255.255.255',
-      },
-      {
-        name: '新设备2',
-        ip: '255.255.255.255',
-      }];
+      this.newHardware = [];
+      this.discoverSocket.send('discover');
       const table = this.$refs.discoverTable;
       if (table !== undefined) {
         table.clearSelection();

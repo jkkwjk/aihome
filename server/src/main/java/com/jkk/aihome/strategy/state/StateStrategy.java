@@ -28,6 +28,8 @@ public abstract class StateStrategy {
 
 	public abstract Boolean addState(AddStateRequest request);
 
+	public abstract Boolean addState(String stateJson, String devId);
+
 	public abstract Boolean deleteState(List<String> stateId);
 
 

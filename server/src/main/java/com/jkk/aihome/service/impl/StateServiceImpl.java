@@ -1,8 +1,10 @@
 package com.jkk.aihome.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.jkk.aihome.entity.DO.HardwareStateDO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
 import com.jkk.aihome.entity.VO.StateVO;
+import com.jkk.aihome.entity.request.state.AddStateRequest;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.repository.HardwareStateRepository;
 import com.jkk.aihome.service.IStateService;
@@ -84,5 +86,11 @@ public class StateServiceImpl implements IStateService {
 						stateStrategyManagement.getStateStrategyByStateType(StateType.of(stateType)).deleteState(stateIds));
 
 		hardwareStateRepository.removeAllByDevId(devId);
+	}
+
+	@Override
+	public Boolean addState(String stateJson, String devId) {
+		AddStateRequest addStateRequest = JSON.parseObject(stateJson, AddStateRequest.class);
+		return stateStrategyManagement.getStateStrategyByStateType(addStateRequest.getStateType()).addState(stateJson, devId);
 	}
 }
