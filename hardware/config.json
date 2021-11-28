@@ -9,7 +9,6 @@
         "textActive": "打开",
         "textUnActive": "关闭",
         "icon": "el-icon-switch-button",
-        "state": true,
         "iconActiveColor": "#000000",
         "iconUnActiveColor": "#aabbcc"
     }

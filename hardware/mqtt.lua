@@ -23,9 +23,10 @@ function mqtt_init()
         end)
         
         mqttClient:on("message", function(client, topic, data)
+            print("new msg" .. data)
             local fSwitch = handleMessageFunction[topic]
             local reposion = sjson.decode(data)
-            if fSwitch then --key exists  
+            if fSwitch then --key exists 
                 if reposion.code ~= nil then
                     if (reposion.code ~= 0) then
                         print("error from server:" .. reposion.msg)
@@ -55,8 +56,10 @@ function connectSuccess()
         -- get DevId
         mqttClient:subscribe(mqtt_config.topic.DEV,1)
     else
---        reconnect
+        -- reconnect
+        send(mqtt_config.topic.REPORT, reportAllState())
     end
+    mqttClient:subscribe(mqtt_config.topic.CONTROL,1)
     
 end
 
@@ -65,9 +68,9 @@ function canProcess(id)
     if (string.find(id, ":") ~= nil) then
         local mac = string.sub(id, 1, 17)
         return mac == wifi.sta.getmac()
-    elseif (len >= 7) then
-        local msgDevId = string.sub(id, 1, 7)
-        return mqtt_config.devId == msgDevId
+    elseif (len >= 8) then
+        local msgDevId = string.sub(id, 1, 8)
+        return msgDevId == mqtt_config.devId
     else
         return len == 1
     end

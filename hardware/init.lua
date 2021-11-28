@@ -9,7 +9,7 @@ function connNotSucess(s, t)
     dofile("firstconn.lua")
     t:unregister()
 end
-
+dofile("gpio.lua")
 if file.exists("wifi.config") then
     if file.open("wifi.config", "r") then
         local ssid = string.gsub(file.readline(), '\n', '')

@@ -32,9 +32,9 @@ public class DiscoverSubscribeStrategy extends SubscribeStrategy {
 		System.out.println("id = " + message.getId());
 		System.out.println("message = " + new String(message.getPayload()));
 
-		DiscoverRequest discoverRequest = JSON.parseObject(new String(message.getPayload()), DiscoverRequest.class);
+		DiscoverRequest discoverRequest = JSON.parseObject(message.toString(), DiscoverRequest.class);
 		if (hardwareService.addHardware(discoverRequest)) {
-			messageUtil.sendMessageOk(TopicNameEnum.DISCOVER.getTopic(), new IdResponse(discoverRequest.getId()));
+//			messageUtil.sendMessageOk(TopicNameEnum.DISCOVER.getTopic(), new IdResponse(discoverRequest.getId()));
 
 			// 告知消费者新加了一个硬件
 			this.setChanged();

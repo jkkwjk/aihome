@@ -30,6 +30,13 @@ Vue.prototype.$message.success = function (message) {
     duration: 1000,
   });
 };
+Vue.prototype.$message.error = function (message) {
+  return ElementUI.Message.error({
+    message,
+    offset: 10,
+    duration: 2000,
+  });
+};
 
 new Vue({
   store,

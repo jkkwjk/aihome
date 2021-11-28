@@ -14,6 +14,15 @@ handleMessageFunction = {
                 local config = sjson.decode(file.getcontents("config.json"))
                 config.devId = mqtt_config.devId
                 config.mac = wifi.sta.getmac()
+
+                config_states = config["states"]
+                for i=1,#config_states do
+                    config_states[i].state = states[i]
+                end
+
+                -- unknown bug no mac
+                config.mac = wifi.sta.getmac()
+                
                 send(mqtt_config.topic.DISCOVER, config)
             else
                 print("no config.json")
@@ -31,16 +40,22 @@ handleMessageFunction = {
             
         end
     end,  
-    case2 = function()  
-        --case 2  
+    control = function(data)
+        local data_states = data.states
+        handleControl(data.id, data_states.id, data_states.state)
     end
 }
 
-function send(topic, msg)
-    if (mqtt_config.devId == nil) then
-        msg["id"] = wifi.sta.getmac() .. tmr.now()
+function send(topic, msg, id)
+    if (id ~= nil) then
+         msg["id"] = id
     else
-        msg["id"] = mqtt_config.devId.. tmr.now()
+        if (mqtt_config.devId == nil) then
+            msg["id"] = wifi.sta.getmac() .. tmr.now()
+        else
+            msg["id"] = mqtt_config.devId.. tmr.now()
+        end
     end
+    
     mqttClient:publish(topic, sjson.encode(msg), 1, 0)
 end

@@ -32,6 +32,10 @@ public abstract class StateStrategy {
 
 	public abstract Boolean deleteState(List<String> stateId);
 
+	public abstract void updateState(String stateId, Object state);
+
+	public abstract Object convertStateToObject(String state);
+
 
 	protected String generateStateIdByDevId(String devId) {
 		return hardwareStateRepository.findFirstByDevIdOrderByIdDesc(devId)

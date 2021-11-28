@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,5 +93,21 @@ public class StateServiceImpl implements IStateService {
 	public Boolean addState(String stateJson, String devId) {
 		AddStateRequest addStateRequest = JSON.parseObject(stateJson, AddStateRequest.class);
 		return stateStrategyManagement.getStateStrategyByStateType(addStateRequest.getStateType()).addState(stateJson, devId);
+	}
+
+	@Transactional
+	@Override
+	public void updateState(String stateId, Object state) {
+		HardwareStateDO hardwareStateDO = hardwareStateRepository.findByStateId(stateId);
+		hardwareStateDO.setReportTime(new Date());
+		hardwareStateRepository.save(hardwareStateDO);
+
+		stateStrategyManagement.getStateStrategyByStateId(stateId).updateState(stateId, state);
+	}
+
+	@Override
+	public void updateStateSting(String stateId, String state) {
+		StateStrategy stateStrategy = stateStrategyManagement.getStateStrategyByStateId(stateId);
+		stateStrategy.updateState(stateId, stateStrategy.convertStateToObject(state));
 	}
 }

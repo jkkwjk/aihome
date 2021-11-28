@@ -115,4 +115,16 @@ public class ModeStrategy extends StateStrategy{
 		return modeOptionRepository.removeAllByStateIdIn(stateId) != 0
 				&& modeStateRepository.removeAllByStateIdIn(stateId) != 0;
 	}
+
+	@Override
+	public void updateState(String stateId, Object state) {
+		ModeStateDO modeStateDO = modeStateRepository.findByStateId(stateId);
+		modeStateDO.setState((String) state);
+		modeStateRepository.save(modeStateDO);
+	}
+
+	@Override
+	public Object convertStateToObject(String state) {
+		return state;
+	}
 }

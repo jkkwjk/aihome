@@ -94,21 +94,24 @@ public class OverviewServiceImpl implements IOverviewService {
 	@Override
 	public void deleteOverviewByStateId(String stateId) {
 		OverviewDO overviewDO = overviewRepository.findByStateId(stateId);
-		if (overviewDO.getBeforeId() != null) {
-			OverviewDO beforeOverviewDO = overviewRepository.findById(overviewDO.getBeforeId())
-					.orElseThrow(() -> new StateException("overviewDO beforeId没有找到" + overviewDO));
-			beforeOverviewDO.setAfterId(overviewDO.getAfterId());
-			overviewRepository.save(beforeOverviewDO);
-		}
 
-		if (overviewDO.getAfterId() != null) {
-			OverviewDO afterOverviewDO = overviewRepository.findById(overviewDO.getAfterId())
-					.orElseThrow(() -> new StateException("overviewDO afterId没有找到" + overviewDO));
-			afterOverviewDO.setBeforeId(overviewDO.getBeforeId());
-			overviewRepository.save(afterOverviewDO);
-		}
+		if (overviewDO != null) {
+			if (overviewDO.getBeforeId() != null) {
+				OverviewDO beforeOverviewDO = overviewRepository.findById(overviewDO.getBeforeId())
+						.orElseThrow(() -> new StateException("overviewDO beforeId没有找到" + overviewDO));
+				beforeOverviewDO.setAfterId(overviewDO.getAfterId());
+				overviewRepository.save(beforeOverviewDO);
+			}
 
-		overviewRepository.delete(overviewDO);
+			if (overviewDO.getAfterId() != null) {
+				OverviewDO afterOverviewDO = overviewRepository.findById(overviewDO.getAfterId())
+						.orElseThrow(() -> new StateException("overviewDO afterId没有找到" + overviewDO));
+				afterOverviewDO.setBeforeId(overviewDO.getBeforeId());
+				overviewRepository.save(afterOverviewDO);
+			}
+
+			overviewRepository.delete(overviewDO);
+		}
 	}
 
 	@Transactional

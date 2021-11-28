@@ -11,4 +11,11 @@ public interface IMqttService {
 	 * @param messageId 回应的设备消息id
 	 */
 	void sendDevId(String messageId);
+
+	/**
+	 * 给指定设备发送控制指令
+	 * @param stateId 状态id
+	 * @param state 想变成的状态
+	 */
+	void sendControlCMD(String stateId, String state);
 }

@@ -3,8 +3,11 @@ package com.jkk.aihome.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jkk.aihome.entity.VO.HardwareWithStateVO;
 import com.jkk.aihome.entity.VO.R;
+import com.jkk.aihome.entity.VO.StateVO;
+import com.jkk.aihome.entity.VO.state.StateDetailVO;
 import com.jkk.aihome.enums.TopicNameEnum;
 import com.jkk.aihome.service.IHardwareService;
+import com.jkk.aihome.service.IOverviewService;
 import com.jkk.aihome.strategy.subscribe.SubscribeStrategyManagement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,37 +23,37 @@ import java.util.List;
 import java.util.Observer;
 import java.util.Set;
 
-@ServerEndpoint(value = "/ws/hardware")
+@ServerEndpoint(value = "/ws/overview")
 @Component
-public class DiscoverWebSocket {
-	private static IHardwareService hardwareService;
+public class OverviewWebSocket {
+	private static IOverviewService overviewService;
 
 	@Autowired
-	public void setHardwareService(IHardwareService hardwareService) {
-		DiscoverWebSocket.hardwareService = hardwareService;
+	public void setHardwareService(IOverviewService overviewService) {
+		OverviewWebSocket.overviewService = overviewService;
 	}
 
 	private static SubscribeStrategyManagement subscribeStrategyManagement;
 
 	@Autowired
 	public void setSubscribeStrategyManagement(SubscribeStrategyManagement subscribeStrategyManagement) {
-		DiscoverWebSocket.subscribeStrategyManagement = subscribeStrategyManagement;
+		OverviewWebSocket.subscribeStrategyManagement = subscribeStrategyManagement;
 	}
 
 	private static ObjectMapper objectMapper;
 
 	@Autowired
 	public void setJsonMapper(ObjectMapper objectMapper) {
-		DiscoverWebSocket.objectMapper = objectMapper;
+		OverviewWebSocket.objectMapper = objectMapper;
 	}
 
 	private final Set<Session> sessionSet = new HashSet<>();
 	private final Observer observer = (o, arg) -> {
-		List<HardwareWithStateVO> hardwareWithStateVOList = hardwareService.findAllHardwiredAndStates();
+		List<StateDetailVO> stateDetailVOList = overviewService.getAddedOverview();
 
 		sessionSet.forEach(session -> {
 			try {
-				session.getBasicRemote().sendText(objectMapper.writeValueAsString(R.ok(hardwareWithStateVOList)));
+				session.getBasicRemote().sendText(objectMapper.writeValueAsString(R.ok(stateDetailVOList)));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -61,7 +64,6 @@ public class DiscoverWebSocket {
 	public void onOpen(Session session) {
 		sessionSet.add(session);
 		observer.update(null, null);
-		subscribeStrategyManagement.getSubscribeStrategyByName(TopicNameEnum.DISCOVER).addObserver(observer);
 		subscribeStrategyManagement.getSubscribeStrategyByName(TopicNameEnum.REPORT).addObserver(observer);
 	}
 
@@ -73,7 +75,6 @@ public class DiscoverWebSocket {
 	@OnClose
 	public void OnClose(Session session) {
 		sessionSet.remove(session);
-		subscribeStrategyManagement.getSubscribeStrategyByName(TopicNameEnum.DISCOVER).deleteObserver(observer);
 		subscribeStrategyManagement.getSubscribeStrategyByName(TopicNameEnum.REPORT).deleteObserver(observer);
 	}
 }

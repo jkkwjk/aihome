@@ -18,5 +18,6 @@ public class DiscoverRequest {
 
 	private String mac;
 
+	// stateJson
 	private List<String> states;
 }

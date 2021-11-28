@@ -101,20 +101,26 @@ export default {
       selectNewHardware: [],
       searchText: '',
       discoverDialogVisible: false,
-      discoverSocket: null,
+      devSocket: null,
     };
   },
 
   created() {
-    const discoverSocket = new WebSocket(`ws://${process.env.VUE_APP_WEBSOCKET}/ws/dev`);
-    discoverSocket.onmessage = (data) => {
+    const devSocket = new WebSocket(`ws://${process.env.VUE_APP_WEBSOCKET}/ws/dev`);
+    devSocket.onmessage = (data) => {
       const socketData = JSON.parse(data.data);
       this.newHardware = socketData.data;
-      console.log(socketData.data[0]);
     };
 
-    this.discoverSocket = discoverSocket;
-    this.getAllHardware();
+    this.devSocket = devSocket;
+
+    const discoverSocket = new WebSocket(`ws://${process.env.VUE_APP_WEBSOCKET}/ws/hardware`);
+    discoverSocket.onmessage = (data) => {
+      const socketData = JSON.parse(data.data);
+      this.hardware = socketData.data;
+    };
+
+    // this.getAllHardware();
   },
   methods: {
     async getAllHardware() {
@@ -150,7 +156,7 @@ export default {
 
     beforeDiscover() {
       this.newHardware = [];
-      this.discoverSocket.send('discover');
+      this.devSocket.send('discover');
       const table = this.$refs.discoverTable;
       if (table !== undefined) {
         table.clearSelection();

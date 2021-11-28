@@ -85,4 +85,16 @@ public class ValueStrategy extends StateStrategy{
 	public Boolean deleteState(List<String> stateId) {
 		return valueStateRepository.removeAllByStateIdIn(stateId) != 0;
 	}
+
+	@Override
+	public void updateState(String stateId, Object state) {
+		ValueStateDO valueStateDO = valueStateRepository.findByStateId(stateId);
+		valueStateDO.setState((Integer) state);
+		valueStateRepository.save(valueStateDO);
+	}
+
+	@Override
+	public Object convertStateToObject(String state) {
+		return Integer.parseInt(state);
+	}
 }

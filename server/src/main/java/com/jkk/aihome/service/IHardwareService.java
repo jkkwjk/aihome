@@ -2,6 +2,7 @@ package com.jkk.aihome.service;
 
 import com.jkk.aihome.entity.VO.HardwareWithStateVO;
 import com.jkk.aihome.hardware.request.DiscoverRequest;
+import com.jkk.aihome.hardware.request.StateReportRequest;
 
 import java.util.List;
 
@@ -13,4 +14,6 @@ public interface IHardwareService {
 	void deleteHardwareByDevId(String devId);
 
 	Boolean addHardware(DiscoverRequest discoverRequest);
+
+	void reportStateProcess(StateReportRequest stateReportRequest);
 }

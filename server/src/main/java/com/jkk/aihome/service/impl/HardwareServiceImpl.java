@@ -4,10 +4,12 @@ import java.util.Date;
 import com.jkk.aihome.entity.DO.HardwareDO;
 import com.jkk.aihome.entity.VO.HardwareWithStateVO;
 import com.jkk.aihome.hardware.request.DiscoverRequest;
+import com.jkk.aihome.hardware.request.StateReportRequest;
 import com.jkk.aihome.repository.HardwareRepository;
 import com.jkk.aihome.service.IHardwareService;
 import com.jkk.aihome.service.IOverviewService;
 import com.jkk.aihome.service.IStateService;
+import com.jkk.aihome.util.IdUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -51,30 +53,38 @@ public class HardwareServiceImpl implements IHardwareService {
 	@Transactional
 	@Override
 	public void deleteHardwareByDevId(String devId) {
-		hardwareRepository.removeByDevId(devId);
-		stateService.deleteAllStateByDevId(devId);
 		overviewService.deleteAllOverviewByDevId(devId);
+		stateService.deleteAllStateByDevId(devId);
+		hardwareRepository.removeByDevId(devId);
 	}
 
 	@Transactional
 	@Override
 	public Boolean addHardware(DiscoverRequest discoverRequest) {
 		HardwareDO hardwareDO = new HardwareDO();
-		hardwareDO.setDevId(discoverRequest.getDevId());
-		hardwareDO.setName(discoverRequest.getName());
-		hardwareDO.setIcon(discoverRequest.getIcon());
-		hardwareDO.setMac(discoverRequest.getMac());
+		BeanUtils.copyProperties(discoverRequest, hardwareDO);
 		hardwareDO.setDiscoverTime(new Date());
 		hardwareDO.setHeartTime(new Date());
 		hardwareDO = hardwareRepository.save(hardwareDO);
 
+		// 添加状态
 		boolean addStateResult = discoverRequest.getStates().stream()
 				.map(stateJson -> stateService.addState(stateJson, discoverRequest.getDevId()))
 				.allMatch((result) -> result.equals(true));
 
-		// 添加状态
-
-
 		return addStateResult && hardwareDO.getId() != null;
+	}
+
+	@Transactional
+	@Override
+	public void reportStateProcess(StateReportRequest stateReportRequest) {
+		HardwareDO hardwareDO = hardwareRepository.findByDevId(stateReportRequest.getDevId());
+		hardwareDO.setHeartTime(new Date());
+		hardwareRepository.save(hardwareDO);
+
+		stateReportRequest.getStates().forEach(state -> {
+			String stateId = IdUtil.getStateIdFromDevIdAndId(stateReportRequest.getDevId(), state.getId());
+			stateService.updateState(stateId, state.getState());
+		});
 	}
 }

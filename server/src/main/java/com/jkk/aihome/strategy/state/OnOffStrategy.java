@@ -6,7 +6,6 @@ import com.jkk.aihome.entity.DO.OnOffStateDO;
 import com.jkk.aihome.entity.VO.state.OnOffStateDetailVO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
 import com.jkk.aihome.entity.request.state.AddStateRequest;
-import com.jkk.aihome.entity.request.state.ModeAddStateRequest;
 import com.jkk.aihome.entity.request.state.OnOffAddStateRequest;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.repository.HardwareStateRepository;
@@ -80,5 +79,17 @@ public class OnOffStrategy extends StateStrategy {
 	@Override
 	public Boolean deleteState(List<String> stateId) {
 		return onOffStateRepository.removeAllByStateIdIn(stateId) != 0;
+	}
+
+	@Override
+	public void updateState(String stateId, Object state) {
+		OnOffStateDO onOffStateDO = onOffStateRepository.findByStateId(stateId);
+		onOffStateDO.setState((Boolean) state);
+		onOffStateRepository.save(onOffStateDO);
+	}
+
+	@Override
+	public Object convertStateToObject(String state) {
+		return Boolean.valueOf(state);
 	}
 }

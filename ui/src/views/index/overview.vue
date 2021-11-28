@@ -1,5 +1,5 @@
 <template>
-  <div class="overview">
+  <div class="overview" v-loading.fullscreen.lock="loading">
     <el-row class="tool-bar"
     :style="{'margin-top': $store.state.isShake || $store.state.hardwareOverview.length === 0? '0':'-30px'}">
       <alpha-button icon="el-icon-plus" round size="mini" @click="handleOpenAddOverviewDialog"/>
@@ -11,13 +11,13 @@
     </el-row>
 
     <el-row :gutter="10" class="data" @mousemove.native="handleMouseMove" ref="posr">
-      <all-widget :hardware="hardwareOverview"></all-widget>
+      <all-widget :hardware="hardwareOverview" @stateChange="handleStateChange"></all-widget>
     </el-row>
 
     <el-dialog title="添加到概览"
                :visible.sync="addOverviewDialogVisible">
       <el-row :gutter="10">
-        <all-widget :can-shake="false" :hardware="hardwareWithOutOverview" @click="handleAddOverview"></all-widget>
+        <all-widget :can-shake="false" :hardware="hardwareWithOutOverview" @click="handleAddOverview" @stateChange="$message.error('请先添加到概览再操作')"></all-widget>
       </el-row>
     </el-dialog>
   </div>
@@ -27,6 +27,7 @@
 <script>
 import AllWidget from '@components/hardWidget/AllWidget';
 import overviewApi from '@api/OverviewApi';
+import controlApi from '@api/ControlApi';
 import AlphaButton from '../../components/AlphaButton';
 
 export default {
@@ -34,8 +35,17 @@ export default {
   components: {
     AllWidget, AlphaButton,
   },
-  async created() {
-    this.$store.commit('setHardwareOverview', await overviewApi.getAll());
+  created() {
+    const overviewSocket = new WebSocket(`ws://${process.env.VUE_APP_WEBSOCKET}/ws/overview`);
+    overviewSocket.onmessage = (data) => {
+      const socketData = JSON.parse(data.data);
+      this.$store.commit('setHardwareOverview', socketData.data);
+      this.loading = false;
+      if (this.loadingTimeout != null) {
+        clearTimeout(this.loadingTimeout);
+      }
+    };
+    // this.$store.commit('setHardwareOverview', await overviewApi.getAll());
   },
   data() {
     return {
@@ -46,6 +56,8 @@ export default {
       },
       originIndex: -1,
       addOverviewDialogVisible: false,
+      loading: false,
+      loadingTimeout: null,
     };
   },
   methods: {
@@ -58,6 +70,15 @@ export default {
     async handleOpenAddOverviewDialog() {
       this.hardwareWithOutOverview = await overviewApi.getUnAddOverview();
       this.addOverviewDialogVisible = true;
+    },
+    handleStateChange(stateId, state) {
+      console.log(stateId, state);
+      this.loading = true;
+      this.loadingTimeout = setTimeout(() => {
+        this.loading = false;
+        this.$message.error('设备无响应');
+      }, 5000);
+      controlApi.updateState(stateId, state);
     },
     handleMouseMove(e) {
       const posr = this.$refs.posr.$el;

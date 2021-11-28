@@ -1,20 +1,26 @@
 package com.jkk.aihome.controller;
 
 import com.jkk.aihome.entity.VO.R;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.jkk.aihome.service.IMqttService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/control")
 public class ControlController {
+	private final IMqttService mqttService;
+
+	public ControlController(IMqttService mqttService) {
+		this.mqttService = mqttService;
+	}
+
 	@GetMapping("/{stateId}")
 	public R<String> getState(@PathVariable String stateId) {
 		return R.ok("1");
 	}
 
 	@PutMapping("/{stateId}")
-	public R<String> modifyState(@PathVariable String stateId, String state) {
-		return R.ok("2");
+	public R<Boolean> modifyState(@PathVariable String stateId, String state) {
+		mqttService.sendControlCMD(stateId, state);
+		return R.ok(true);
 	}
 }

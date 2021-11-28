@@ -17,4 +17,12 @@ public class IdUtil {
 	public static String getDevIdFromStateId(String stateId) {
 		return stateId.split("-")[0];
 	}
+
+	public static String getStateIdFromDevIdAndId(String devId, Integer id) {
+		return devId + "-" + id;
+	}
+
+	public static Integer getHardwareIdFromStateId(String stateId) {
+		return Integer.parseInt(stateId.split("-")[1]);
+	}
 }

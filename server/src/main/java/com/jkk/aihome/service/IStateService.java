@@ -20,4 +20,8 @@ public interface IStateService {
 	void deleteAllStateByDevId(String devId);
 
 	Boolean addState(String stateJson, String devId);
+
+	void updateState(String stateId, Object state);
+
+	void updateStateSting(String stateId, String state);
 }
