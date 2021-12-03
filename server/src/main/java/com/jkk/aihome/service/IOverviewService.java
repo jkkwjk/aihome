@@ -18,4 +18,6 @@ public interface IOverviewService {
 	void deleteOverviewByStateId(String stateId);
 
 	void deleteAllOverviewByDevId(String devId);
+
+	Boolean reorderOverview(String stateId, String toStateId);
 }

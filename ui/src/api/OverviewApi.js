@@ -1,5 +1,5 @@
-import BaseApi from './BaseApi';
 import axios from '@/http/http';
+import BaseApi from './BaseApi';
 
 class OverviewApi extends BaseApi {
   constructor() {
@@ -8,6 +8,10 @@ class OverviewApi extends BaseApi {
 
   getUnAddOverview() {
     return axios.get(`/${this.prefix}/unadd`);
+  }
+
+  reorderOverview(stateId, toStateId) {
+    return axios.put(`/${this.prefix}`, { stateId, toStateId });
   }
 }
 

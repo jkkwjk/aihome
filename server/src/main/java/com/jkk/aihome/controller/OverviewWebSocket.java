@@ -69,7 +69,9 @@ public class OverviewWebSocket {
 
 	@OnMessage
 	public void onMessage(Session session, String message) throws Exception{
-
+		if (message.equals("refresh")) {
+			observer.update(null, null);
+		}
 	}
 
 	@OnClose

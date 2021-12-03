@@ -1,5 +1,5 @@
-import BaseApi from './BaseApi';
 import axios from '@/http/http';
+import BaseApi from './BaseApi';
 
 class HardwareApi extends BaseApi {
   constructor() {

@@ -31,9 +31,15 @@ public class OverviewController {
 		return R.ok(overviewService.addLastByStateId(stateId));
 	}
 
+	/**
+	 * 交换两者的位置
+	 * @param stateId
+	 * @param toStateId
+	 * @return
+	 */
 	@PutMapping
-	public R<String> reOrderOverview(String stateId, Integer to) {
-		return R.ok("2313");
+	public R<Boolean> reOrderOverview(String stateId, String toStateId) {
+		return R.ok(overviewService.reorderOverview(stateId, toStateId));
 	}
 
 	@DeleteMapping("/{stateId}")

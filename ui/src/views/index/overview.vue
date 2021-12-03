@@ -45,6 +45,7 @@ export default {
         clearTimeout(this.loadingTimeout);
       }
     };
+    this.overviewSocket = overviewSocket;
     // this.$store.commit('setHardwareOverview', await overviewApi.getAll());
   },
   data() {
@@ -55,9 +56,11 @@ export default {
         stateId: 'tmp',
       },
       originIndex: -1,
+      moveToIndex: -1,
       addOverviewDialogVisible: false,
       loading: false,
       loadingTimeout: null,
+      overviewSocket: null,
     };
   },
   methods: {
@@ -84,24 +87,18 @@ export default {
       const posr = this.$refs.posr.$el;
       const x = e.clientX - posr.offsetLeft;
       const y = e.clientY - posr.offsetTop;
-      let moveToIndex = parseInt(y / (this.moveElement.height + 10), 10) * 4 + parseInt(x / (this.moveElement.width + 10), 10);
+      this.moveToIndex = parseInt(y / (this.moveElement.height + 20), 10) * 4 + parseInt(x / (this.moveElement.width + 20), 10);
       this.hardwareOverview.removeEqual((o) => o.type === 'TMP');
 
-      if (moveToIndex >= this.hardwareOverview.length) {
-        moveToIndex = this.hardwareOverview.length - 1;
+      if (this.moveToIndex >= this.hardwareOverview.length) {
+        this.moveToIndex = this.hardwareOverview.length - 1;
       }
       if (this.moveElement.stateId != null) {
-        if (moveToIndex > this.originIndex) {
-          this.hardwareOverview.splice(moveToIndex + 1, 0, this.temp);
+        if (this.moveToIndex > this.originIndex) {
+          this.hardwareOverview.splice(this.moveToIndex + 1, 0, this.temp);
         } else {
-          this.hardwareOverview.splice(moveToIndex, 0, this.temp);
+          this.hardwareOverview.splice(this.moveToIndex, 0, this.temp);
         }
-      } else if (this.originIndex !== -1) {
-        if (this.originIndex !== moveToIndex) {
-          console.log(`移动；${this.originIndex} -> ${moveToIndex}`);
-          console.log(this.hardwareOverview[this.originIndex].stateId, this.hardwareOverview[moveToIndex].stateId);
-        }
-        this.originIndex = -1;
       }
       this.$store.commit('setXY', { x, y });
     },
@@ -116,13 +113,28 @@ export default {
   },
   watch: {
     'moveElement.stateId': {
-      handler() {
+      async handler() {
         // 防止闪烁
         if (this.moveElement.stateId != null) {
           this.originIndex = this.hardwareOverview.findIndex((o) => o.stateId === this.moveElement.stateId);
           this.hardwareOverview.splice(this.originIndex, 0, this.temp);
         } else {
           this.hardwareOverview.removeEqual((o) => o.type === 'TMP');
+          if (this.originIndex !== this.moveToIndex) {
+            if (this.hardwareOverview[this.originIndex].stateId && this.hardwareOverview[this.moveToIndex].stateId) {
+              this.loading = true;
+              this.loadingTimeout = setTimeout(() => {
+                this.loading = false;
+                this.$message.error('移动失败');
+              }, 5000);
+
+              if (await overviewApi.reorderOverview(this.hardwareOverview[this.originIndex].stateId, this.hardwareOverview[this.moveToIndex].stateId) === true) {
+                this.overviewSocket.send('refresh');
+              }
+            } else {
+              this.$message.error('移动失败');
+            }
+          }
         }
       },
     },

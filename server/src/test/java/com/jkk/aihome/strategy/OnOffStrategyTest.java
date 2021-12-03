@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class OnOffStrategyTest {
 	@Resource
 	private StateStrategy onOffStrategy;
@@ -24,19 +24,19 @@ class OnOffStrategyTest {
 
 	@org.junit.jupiter.api.Test
 	void addState() {
-		OnOffAddStateRequest onOffAddStateRequest = new OnOffAddStateRequest();
-		onOffAddStateRequest.setTextActive("add-text");
-		onOffAddStateRequest.setTextUnActive("add-text-un");
-		onOffAddStateRequest.setIcon("add-icon");
-		onOffAddStateRequest.setState(false);
-		onOffAddStateRequest.setIconActiveColor("#add");
-		onOffAddStateRequest.setIconUnActiveColor("#add-un");
-		onOffAddStateRequest.setDevId("add");
-		onOffAddStateRequest.setStateType(StateType.ON_OFF);
-		onOffAddStateRequest.setCanControl(false);
-		onOffAddStateRequest.setName("程序新添加的");
-
-
-		onOffStrategy.addState(onOffAddStateRequest);
+		for (int i = 0; i < 10; i++) {
+			OnOffAddStateRequest onOffAddStateRequest = new OnOffAddStateRequest();
+			onOffAddStateRequest.setTextActive("开");
+			onOffAddStateRequest.setTextUnActive("关");
+			onOffAddStateRequest.setIcon("el-icon-switch-button");
+			onOffAddStateRequest.setState(false);
+			onOffAddStateRequest.setIconActiveColor("#000000");
+			onOffAddStateRequest.setIconUnActiveColor("#aabbcc");
+			onOffAddStateRequest.setDevId("test");
+			onOffAddStateRequest.setStateType(StateType.ON_OFF);
+			onOffAddStateRequest.setCanControl(true);
+			onOffAddStateRequest.setName("程序新添加的");
+			onOffStrategy.addState(onOffAddStateRequest);
+		}
 	}
 }

@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ModeStrategyTest {
 	@Resource
 	private StateStrategy modeStrategy;
@@ -55,7 +55,7 @@ class ModeStrategyTest {
 
 		modeAddStateRequest.setOptions(modeOptionMap);
 		modeAddStateRequest.setState("eco");
-		modeAddStateRequest.setDevId("add");
+		modeAddStateRequest.setDevId("test");
 		modeAddStateRequest.setStateType(StateType.MODE);
 		modeAddStateRequest.setCanControl(false);
 		modeAddStateRequest.setName("程序新添加的模式");

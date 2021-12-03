@@ -94,7 +94,41 @@ public class OverviewServiceImpl implements IOverviewService {
 	@Override
 	public void deleteOverviewByStateId(String stateId) {
 		OverviewDO overviewDO = overviewRepository.findByStateId(stateId);
+		independenceNodeByOverviewDO(overviewDO);
+		overviewRepository.delete(overviewDO);
+	}
 
+	@Transactional
+	@Override
+	public void deleteAllOverviewByDevId(String devId) {
+		hardwareStateRepository.findAllByDevIdOrderByReportTimeDesc(devId).stream()
+				.map(HardwareStateDO::getStateId)
+				.forEach(this::deleteOverviewByStateId);
+	}
+
+	@Transactional
+	@Override
+	public Boolean reorderOverview(String stateId, String toStateId) {
+		OverviewDO shouldMoveNode = overviewRepository.findByStateId(stateId);
+		OverviewDO toStateNode = overviewRepository.findByStateId(toStateId);
+
+		int shouldMoveNodeBeforeId = shouldMoveNode.getBeforeId();
+		int shouldMoveNodeAfterId = shouldMoveNode.getAfterId();
+		shouldMoveNode.setBeforeId(toStateNode.getBeforeId());
+		shouldMoveNode.setAfterId(toStateNode.getAfterId());
+		toStateNode.setBeforeId(shouldMoveNodeBeforeId);
+		toStateNode.setAfterId(shouldMoveNodeAfterId);
+
+		relationNodeByOverviewDO(shouldMoveNode);
+		relationNodeByOverviewDO(toStateNode);
+		return true;
+	}
+
+	/**
+	 * 独立某个节点
+	 * @param overviewDO
+	 */
+	private OverviewDO independenceNodeByOverviewDO(OverviewDO overviewDO) {
 		if (overviewDO != null) {
 			if (overviewDO.getBeforeId() != null) {
 				OverviewDO beforeOverviewDO = overviewRepository.findById(overviewDO.getBeforeId())
@@ -109,16 +143,31 @@ public class OverviewServiceImpl implements IOverviewService {
 				afterOverviewDO.setBeforeId(overviewDO.getBeforeId());
 				overviewRepository.save(afterOverviewDO);
 			}
-
-			overviewRepository.delete(overviewDO);
 		}
+
+		return overviewDO;
 	}
 
-	@Transactional
-	@Override
-	public void deleteAllOverviewByDevId(String devId) {
-		hardwareStateRepository.findAllByDevIdOrderByReportTimeDesc(devId).stream()
-				.map(HardwareStateDO::getStateId)
-				.forEach(this::deleteOverviewByStateId);
+	/**
+	 * 关联某个节点
+	 * @param overviewDO
+	 */
+	private void relationNodeByOverviewDO(OverviewDO overviewDO) {
+		Integer beforeId = overviewDO.getBeforeId();
+		Integer afterId = overviewDO.getAfterId();
+
+		if (beforeId != null) {
+			OverviewDO beforeNode = overviewRepository.findById(beforeId)
+					.orElseThrow(() -> new StateException("overviewDO beforeId没有找到" + overviewDO));
+			beforeNode.setAfterId(overviewDO.getId());
+			overviewRepository.save(beforeNode);
+		}
+
+		if (afterId != null) {
+			OverviewDO afterNode = overviewRepository.findById(afterId)
+					.orElseThrow(() -> new StateException("overviewDO afterId没有找到" + overviewDO));
+			afterNode.setBeforeId(overviewDO.getId());
+			overviewRepository.save(afterNode);
+		}
 	}
 }
