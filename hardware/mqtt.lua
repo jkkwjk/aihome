@@ -28,10 +28,8 @@ function mqtt_init()
             local reposion = sjson.decode(data)
             if fSwitch then --key exists 
                 if reposion.code ~= nil then
-                    if (reposion.code ~= 0) then
-                        print("error from server:" .. reposion.msg)
-                    elseif canProcess(reposion.data.id) then
-                        local result = fSwitch(reposion.data) --do func 
+                    if canProcess(reposion.data.id) then
+                        local result = fSwitch(reposion.data, reposion.msg) --do func 
                     end
                 end
                  
@@ -47,11 +45,16 @@ function mqtt_init()
 end
 
 function handle_mqtt_error(client, reason)
+  -- todo cnt
   tmr.create():alarm(10 * 1000, tmr.ALARM_SINGLE, mqtt_init)
 end
 
 function connectSuccess()
     print("connect")
+    
+    mqttClient:subscribe(mqtt_config.topic.REPORT,1)
+    mqttClient:subscribe(mqtt_config.topic.CONTROL,1)
+    
     if(mqtt_config.devId == nil) then
         -- get DevId
         mqttClient:subscribe(mqtt_config.topic.DEV,1)
@@ -59,7 +62,7 @@ function connectSuccess()
         -- reconnect
         send(mqtt_config.topic.REPORT, reportAllState())
     end
-    mqttClient:subscribe(mqtt_config.topic.CONTROL,1)
+    
     
 end
 

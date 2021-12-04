@@ -103,24 +103,40 @@ public class OverviewServiceImpl implements IOverviewService {
 	public void deleteAllOverviewByDevId(String devId) {
 		hardwareStateRepository.findAllByDevIdOrderByReportTimeDesc(devId).stream()
 				.map(HardwareStateDO::getStateId)
+				.filter(stateId -> overviewRepository.findByStateId(stateId) != null)
 				.forEach(this::deleteOverviewByStateId);
 	}
 
 	@Transactional
 	@Override
 	public Boolean reorderOverview(String stateId, String toStateId) {
-		OverviewDO shouldMoveNode = overviewRepository.findByStateId(stateId);
-		OverviewDO toStateNode = overviewRepository.findByStateId(toStateId);
+		OverviewDO stateNode = overviewRepository.findByStateId(stateId);
+		independenceNodeByOverviewDO(stateNode); // 删除被移动的节点
 
-		int shouldMoveNodeBeforeId = shouldMoveNode.getBeforeId();
-		int shouldMoveNodeAfterId = shouldMoveNode.getAfterId();
-		shouldMoveNode.setBeforeId(toStateNode.getBeforeId());
-		shouldMoveNode.setAfterId(toStateNode.getAfterId());
-		toStateNode.setBeforeId(shouldMoveNodeBeforeId);
-		toStateNode.setAfterId(shouldMoveNodeAfterId);
+		if (toStateId != null) {
+			// 插入到toStateId的前面
+			OverviewDO toStateNode = overviewRepository.findByStateId(toStateId);
+			if (toStateNode.getBeforeId() != null) {
+				OverviewDO beforeToStateNode = overviewRepository.findById(toStateNode.getBeforeId())
+						.orElseThrow(() -> new StateException("overviewDO beforeId没有找到" + toStateNode));
+				beforeToStateNode.setAfterId(stateNode.getId());
+				overviewRepository.save(beforeToStateNode);
+			}
+			stateNode.setBeforeId(toStateNode.getBeforeId());
 
-		relationNodeByOverviewDO(shouldMoveNode);
-		relationNodeByOverviewDO(toStateNode);
+			toStateNode.setBeforeId(stateNode.getId());
+			stateNode.setAfterId(toStateNode.getId());
+			overviewRepository.save(toStateNode);
+			overviewRepository.save(stateNode);
+		}else {
+			OverviewDO lastNode = overviewRepository.findByAfterIdNull();
+			lastNode.setAfterId(stateNode.getId());
+			stateNode.setAfterId(null);
+			stateNode.setBeforeId(lastNode.getId());
+			overviewRepository.save(lastNode);
+			overviewRepository.save(stateNode);
+		}
+
 		return true;
 	}
 

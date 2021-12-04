@@ -77,8 +77,11 @@ public class HardwareServiceImpl implements IHardwareService {
 
 	@Transactional
 	@Override
-	public void reportStateProcess(StateReportRequest stateReportRequest) {
+	public Boolean reportStateProcess(StateReportRequest stateReportRequest) {
 		HardwareDO hardwareDO = hardwareRepository.findByDevId(stateReportRequest.getDevId());
+		if (hardwareDO == null) {
+			return false;
+		}
 		hardwareDO.setHeartTime(new Date());
 		hardwareRepository.save(hardwareDO);
 
@@ -86,5 +89,7 @@ public class HardwareServiceImpl implements IHardwareService {
 			String stateId = IdUtil.getStateIdFromDevIdAndId(stateReportRequest.getDevId(), state.getId());
 			stateService.updateState(stateId, state.getState());
 		});
+
+		return true;
 	}
 }

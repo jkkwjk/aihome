@@ -3,11 +3,7 @@ handleMessageFunction = {
         if(#data.id ~= 1) then
             mqtt_config.devId = data.devId
             print(mqtt_config.devId)
-            if file.open("mqtt.config", "w") then
-                file.write(sjson.encode(mqtt_config))
-                file.flush()
-                file.close()
-            end
+            saveMqttConfig()
             
             mqttClient:unsubscribe(mqtt_config.topic.DEV,1)
             if file.exists("config.json") then
@@ -29,13 +25,18 @@ handleMessageFunction = {
             end
         else
             if(data.id == '1') then
-                payload = {
-                    mac = wifi.sta.getmac(),
-                    name = "abcd"
-                }
-                
-                send(mqtt_config.topic.DEV, payload)
-                print("should discover")
+                if file.exists("config.json") then
+                    local config = sjson.decode(file.getcontents("config.json"))
+                    payload = {
+                        mac = wifi.sta.getmac(),
+                        name = config.name
+                    }
+                    
+                    send(mqtt_config.topic.DEV, payload)
+                    print("should discover")
+                else
+                    print("no config.json")
+                end
             end
             
         end
@@ -43,6 +44,14 @@ handleMessageFunction = {
     control = function(data)
         local data_states = data.states
         handleControl(data.id, data_states.id, data_states.state)
+    end,
+    report = function(data, msg)
+        if (msg == "no devId") then
+            print("no devId reset")
+            mqtt_config.devId = nil
+            saveMqttConfig()
+            mqttClient:subscribe(mqtt_config.topic.DEV,1)
+        end
     end
 }
 
@@ -58,4 +67,12 @@ function send(topic, msg, id)
     end
     
     mqttClient:publish(topic, sjson.encode(msg), 1, 0)
+end
+
+function saveMqttConfig()
+    if file.open("mqtt.config", "w") then
+        file.write(sjson.encode(mqtt_config))
+        file.flush()
+        file.close()
+    end
 end

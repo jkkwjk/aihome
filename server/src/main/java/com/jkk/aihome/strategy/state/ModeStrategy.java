@@ -106,6 +106,7 @@ public class ModeStrategy extends StateStrategy{
 	@Override
 	public Boolean addState(String stateJson, String devId) {
 		ModeAddStateRequest modeAddStateRequest = JSON.parseObject(stateJson, ModeAddStateRequest.class);
+		modeAddStateRequest.setDevId(devId);
 		return this.addState(modeAddStateRequest);
 	}
 

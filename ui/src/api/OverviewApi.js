@@ -11,7 +11,10 @@ class OverviewApi extends BaseApi {
   }
 
   reorderOverview(stateId, toStateId) {
-    return axios.put(`/${this.prefix}`, { stateId, toStateId });
+    if (toStateId != null) {
+      return axios.put(`/${this.prefix}`, { stateId, toStateId });
+    }
+    return axios.put(`/${this.prefix}`, { stateId });
   }
 }
 

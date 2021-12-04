@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jkk.aihome.entity.VO.R;
 import com.jkk.aihome.exception.MqttRuntimeException;
+import com.jkk.aihome.hardware.response.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -27,9 +28,10 @@ public class MessageUtil {
 		}
 	}
 
-	public void sendMessageError(String topic, String message) {
+	public void sendMessageError(String topic, String message, String id) {
+		IdResponse idResponse = new IdResponse(id);
 		try {
-			mqttClient.publish(topic, JSON.toJSONString(R.error(message)).getBytes(), 1, false);
+			mqttClient.publish(topic, JSON.toJSONString(R.error(message, idResponse)).getBytes(), 1, false);
 		} catch (MqttException e) {
 			throw new MqttRuntimeException(e);
 		}

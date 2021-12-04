@@ -11,6 +11,9 @@ public class IdUtil {
 			result.append(dict.charAt((int) (time % radix)));
 			time /= radix;
 		}
+		while (result.length() < 8) {
+			result.append("0");
+		}
 		return result.toString();
 	}
 

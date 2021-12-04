@@ -15,5 +15,5 @@ public interface IHardwareService {
 
 	Boolean addHardware(DiscoverRequest discoverRequest);
 
-	void reportStateProcess(StateReportRequest stateReportRequest);
+	Boolean reportStateProcess(StateReportRequest stateReportRequest);
 }

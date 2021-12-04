@@ -60,7 +60,7 @@ class ModeStrategyTest {
 		modeAddStateRequest.setCanControl(false);
 		modeAddStateRequest.setName("程序新添加的模式");
 
-
-		modeStrategy.addState(modeAddStateRequest);
+		System.out.println(JSON.toJSONString(modeAddStateRequest));
+//		modeStrategy.addState(modeAddStateRequest);
 	}
 }

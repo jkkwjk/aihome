@@ -78,6 +78,7 @@ public class ValueStrategy extends StateStrategy{
 	@Override
 	public Boolean addState(String stateJson, String devId) {
 		ValueAddStateRequest valueAddStateRequest = JSON.parseObject(stateJson, ValueAddStateRequest.class);
+		valueAddStateRequest.setDevId(devId);
 		return this.addState(valueAddStateRequest);
 	}
 

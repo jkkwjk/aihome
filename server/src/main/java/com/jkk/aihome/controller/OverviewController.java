@@ -31,12 +31,6 @@ public class OverviewController {
 		return R.ok(overviewService.addLastByStateId(stateId));
 	}
 
-	/**
-	 * 交换两者的位置
-	 * @param stateId
-	 * @param toStateId
-	 * @return
-	 */
 	@PutMapping
 	public R<Boolean> reOrderOverview(String stateId, String toStateId) {
 		return R.ok(overviewService.reorderOverview(stateId, toStateId));

@@ -122,15 +122,20 @@ export default {
           this.hardwareOverview.removeEqual((o) => o.type === 'TMP');
           if (this.originIndex !== this.moveToIndex) {
             if (this.hardwareOverview[this.originIndex].stateId && this.hardwareOverview[this.moveToIndex].stateId) {
+              if (this.originIndex < this.moveToIndex) {
+                this.moveToIndex += 1;
+              }
               this.loading = true;
               this.loadingTimeout = setTimeout(() => {
                 this.loading = false;
                 this.$message.error('移动失败');
               }, 5000);
 
-              if (await overviewApi.reorderOverview(this.hardwareOverview[this.originIndex].stateId, this.hardwareOverview[this.moveToIndex].stateId) === true) {
+              const toStateId = this.moveToIndex < this.hardwareOverview.length ? this.hardwareOverview[this.moveToIndex].stateId : null;
+              if (await overviewApi.reorderOverview(this.hardwareOverview[this.originIndex].stateId, toStateId) === true) {
                 this.overviewSocket.send('refresh');
               }
+              // console.log(this.hardwareOverview[this.originIndex].stateId, this.hardwareOverview[this.moveToIndex].stateId);
             } else {
               this.$message.error('移动失败');
             }

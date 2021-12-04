@@ -10,8 +10,8 @@
 
       <mode-widget v-if="h.type === 'MODE'" :key="h.stateId"
                    @click.native="handleClick(h.stateId)"
-                   :state-id="h.stateId" :can-shake="canShake"
-                   :state.sync="h.state" :name="h.name"
+                   :state-id="h.stateId" :can-shake="canShake" @update:state="(state) => handleStateChange(h.stateId, state)"
+                   :state="h.state" :name="h.name"
                    :can-control="h.canControl" :options="h.options"/>
       <value-widget v-if="h.type === 'VALUE'" :key="h.stateId"
                     @click.native="handleClick(h.stateId)"

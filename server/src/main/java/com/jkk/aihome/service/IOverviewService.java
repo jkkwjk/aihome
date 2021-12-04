@@ -19,5 +19,11 @@ public interface IOverviewService {
 
 	void deleteAllOverviewByDevId(String devId);
 
+	/**
+	 * stateId插入到toStateId的前面
+	 * @param stateId
+	 * @param toStateId null表示插入到最后
+	 * @return
+	 */
 	Boolean reorderOverview(String stateId, String toStateId);
 }

@@ -1,0 +1,16 @@
+{
+  "name": "测试硬件",
+  "icon": "el-icon-switch-button",
+  "states": [
+    {
+        "stateType": "ON_OFF",
+        "canControl": true,
+        "name": "状态-开关",
+        "textActive": "打开",
+        "textUnActive": "关闭",
+        "icon": "el-icon-switch-button",
+        "iconActiveColor": "#000000",
+        "iconUnActiveColor": "#aabbcc"
+    }
+  ]
+}
