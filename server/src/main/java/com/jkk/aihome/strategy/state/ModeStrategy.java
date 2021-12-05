@@ -7,8 +7,8 @@ import com.jkk.aihome.entity.DO.modestate.ModeStateDO;
 import com.jkk.aihome.entity.ModeOption;
 import com.jkk.aihome.entity.VO.state.ModeStateDetailVO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
-import com.jkk.aihome.entity.request.state.AddStateRequest;
-import com.jkk.aihome.entity.request.state.ModeAddStateRequest;
+import com.jkk.aihome.hardware.request.AddStateRequest;
+import com.jkk.aihome.hardware.request.ModeAddStateRequest;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.repository.HardwareStateRepository;
 import com.jkk.aihome.repository.modestate.ModeOptionRepository;
@@ -60,8 +60,7 @@ public class ModeStrategy extends StateStrategy{
 
 	@Override
 	public String getStringState(String stateId) {
-		String modeValue = modeStateRepository.findByStateId(stateId).getState(); // 内部显示数值
-		return modeOptionRepository.findByStateIdAndModeValue(stateId, modeValue).getModeText();
+		return modeStateRepository.findByStateId(stateId).getState();
 	}
 
 	@Override

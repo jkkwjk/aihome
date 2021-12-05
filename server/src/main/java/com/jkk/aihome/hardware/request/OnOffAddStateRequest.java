@@ -1,4 +1,4 @@
-package com.jkk.aihome.entity.request.state;
+package com.jkk.aihome.hardware.request;
 
 import lombok.Data;
 

@@ -1,7 +1,7 @@
 package com.jkk.aihome;
 
 import com.alibaba.fastjson.JSON;
-import com.jkk.aihome.entity.request.state.ModeAddStateRequest;
+import com.jkk.aihome.hardware.request.ModeAddStateRequest;
 import com.jkk.aihome.hardware.request.StateReportRequest;
 import org.junit.jupiter.api.Test;
 

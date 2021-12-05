@@ -1,6 +1,6 @@
 <template>
   <div class="editable-span">
-    <span @click="editing = true">{{ text === ''? emptyText : text }}</span>
+    <span @click="editing = true">{{ text === null || text === '' ? emptyText : text }}</span>
     <el-input v-if="editing" v-model="inputText" @blur="editing = false" ref="input" size="mini">
       <i class="el-icon-check el-input__icon" slot="suffix" @mousedown.prevent="handleClick" />
     </el-input>
@@ -16,7 +16,7 @@ export default {
   },
 
   props: {
-    text: { required: true, type: String }, // 文本
+    text: { required: true }, // 文本
     emptyText: { required: false, type: String, default: '无' }, // 空字符的显示
     allowContinueEditing: { required: false, type: Boolean, default: false }, // 是否允许停止输入后接着上次继续输入
   },

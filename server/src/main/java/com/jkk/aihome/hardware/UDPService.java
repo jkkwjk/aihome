@@ -1,23 +1,20 @@
 package com.jkk.aihome.hardware;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import com.alibaba.fastjson.JSON;
-import com.jkk.aihome.entity.VO.MqttConfigVO;
+import com.jkk.aihome.hardware.response.MqttConfigResponse;
 import com.jkk.aihome.entity.config.MqttConfig;
 import com.jkk.aihome.enums.TopicNameEnum;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.InitBinder;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -65,17 +62,17 @@ public class UDPService {
 		UDP.send(sendPacket);
 	}
 
-	private MqttConfigVO buildMqttConfigVO() {
-		MqttConfigVO mqttConfigVO = new MqttConfigVO();
+	private MqttConfigResponse buildMqttConfigVO() {
+		MqttConfigResponse mqttConfigResponse = new MqttConfigResponse();
 		String url = mqttConfig.getUrl().split("//")[1];
 		if (url.contains("localhost") || url.contains("127.0.0.1")) {
 			url = mqttConfig.getAddress();
 		}
 		String[] splitRes = url.split(":");
-		mqttConfigVO.setAddress(splitRes[0]);
-		mqttConfigVO.setPort(splitRes[1]);
-		mqttConfigVO.setTopic(Arrays.stream(TopicNameEnum.values()).collect(Collectors.toMap(Enum::toString, TopicNameEnum::getName)));
+		mqttConfigResponse.setAddress(splitRes[0]);
+		mqttConfigResponse.setPort(splitRes[1]);
+		mqttConfigResponse.setTopic(Arrays.stream(TopicNameEnum.values()).collect(Collectors.toMap(Enum::toString, TopicNameEnum::getName)));
 
-		return mqttConfigVO;
+		return mqttConfigResponse;
 	}
 }

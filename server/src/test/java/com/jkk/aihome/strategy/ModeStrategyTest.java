@@ -4,9 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.jkk.aihome.entity.ValueConfig;
-import com.jkk.aihome.entity.request.state.ModeAddStateRequest;
-import com.jkk.aihome.entity.request.state.ValueAddStateRequest;
+import com.jkk.aihome.hardware.request.ModeAddStateRequest;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.strategy.state.StateStrategy;
 import org.springframework.boot.test.context.SpringBootTest;

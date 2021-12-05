@@ -1,11 +1,11 @@
-package com.jkk.aihome.entity.VO;
+package com.jkk.aihome.hardware.response;
 
 import lombok.Data;
 
 import java.util.Map;
 
 @Data
-public class MqttConfigVO {
+public class MqttConfigResponse {
 	private String address;
 
 	private String port;

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.jkk.aihome.entity.DO.HardwareStateDO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
 import com.jkk.aihome.entity.VO.StateVO;
-import com.jkk.aihome.entity.request.state.AddStateRequest;
+import com.jkk.aihome.hardware.request.AddStateRequest;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.repository.HardwareStateRepository;
 import com.jkk.aihome.service.IStateService;

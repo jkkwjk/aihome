@@ -16,12 +16,13 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="autoId" label="自动化ID" width="100" />
+            <el-table-column prop="id" label="自动化ID" width="100" />
             <el-table-column label="cron表达式" min-width="250">
               <template slot-scope="scope">
                 <div class="name">
                   <editable-span
                     :text="scope.row.cron"
+                    emptyText="请输入表达式"
                     @edit="(text) => handleEditCron(scope.row, text)"
                   >
                   </editable-span>
@@ -34,8 +35,8 @@
               </template>
               <template slot-scope="scope">
                 <div style="white-space: nowrap;">
-                  <el-switch v-model="scope.row.enabled"/>
-                  <i class="el-icon-arrow-left show-code-btn" @click="handleShowCode(scope.$index)"></i>
+                  <el-switch :value="scope.row.enable" @input="value => handleEnableChange(scope.row, value)"/>
+                  <i class="el-icon-arrow-left show-code-btn" @click="handleShowCode(scope.row)"></i>
                 </div>
               </template>
             </el-table-column>
@@ -63,7 +64,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="autoId" label="自动化ID" width="100" />
+            <el-table-column prop="id" label="自动化ID" width="100" />
             <el-table-column label="绑定的事件" min-width="250">
               <template slot-scope="scope">
                   <div slot>
@@ -85,8 +86,8 @@
               </template>
               <template slot-scope="scope">
                 <div style="white-space: nowrap;">
-                  <el-switch v-model="scope.row.enabled"/>
-                  <i class="el-icon-arrow-left show-code-btn" @click="handleShowCode(scope.$index)"></i>
+                  <el-switch :value="scope.row.enable" @input="value => handleEnableChange(scope.row, value)"/>
+                  <i class="el-icon-arrow-left show-code-btn" @click="handleShowCode(scope.row)"></i>
                 </div>
               </template>
             </el-table-column>
@@ -129,19 +130,22 @@
 
 import CodeView from '@components/auto/CodeView';
 import EditableSpan from '@components/EditableSpan';
+import autoApi from '@/api/AutoApi';
 
 export default {
   name: 'auto',
   components: { CodeView, EditableSpan },
   data() {
     const version = '# version: Python3\n\n';
-    const codeAreaTip = '# 注意：写在外部的变量各脚本间上下文将会共享\n\n';
-    const codeTip = "'''\n下面的函数将会按照定时或者状态驱动的方式执行\n'''\n";
-    const code = 'def doAutoTask(states):\n\t# write your code here.\n\tpass';
-    const initValue = version + codeAreaTip + codeTip + code;
+    const codeTip = "'''\n下面的函数将会按照定时或者状态驱动的方式执行\n";
+    const asyncTip = "各个脚本之间将会以阻塞队列方式同步执行, 所以——某些执行时间长的任务请新建线程~\n'''\n\n\n";
+    const code = 'def doAutoTask(states, globals):\n\t# write your code here.\n\t';
+    const control = 'control = {}\n\treturn control\n\t';
+    const initValue = version + codeTip + asyncTip + code + control;
 
     return {
-      code: 'version: Python',
+      code: '',
+      editCodeId: null,
       searchAutoText: '',
       searchEventText: '',
       codeEditor: false,
@@ -149,66 +153,43 @@ export default {
         'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
       ],
       defaultPython: initValue,
-      cronAuto: [
-        {
-          name: '卧室等暗了则把厨房的灯打开厨房',
-          autoId: '1231231',
-          cron: '10/0 10/0 10/0 10/0 10/0 10/0 ?',
-          enabled: true,
-        },
-        {
-          name: '123',
-          autoId: '1231231',
-          cron: '10/0 10/0 10/0 10/0 10/0 10/0 ?',
-          enabled: true,
-        },
-        {
-          name: '123',
-          autoId: '1231231',
-          cron: '10/0 10/0 10/0 10/0 10/0 10/0 ?',
-          enabled: true,
-        },
-        {
-          name: '123',
-          autoId: '1231231',
-          cron: '10/0 10/0 10/0 10/0 10/0 10/0 ?',
-          enabled: true,
-        },
-        {
-          name: '123',
-          autoId: '1231231',
-          cron: '10/0 10/0 10/0 10/0 10/0 10/0 ?',
-          enabled: true,
-        },
-        {
-          name: '123',
-          autoId: '1231231',
-          cron: '10/0 10/0 10/0 10/0 10/0 10/0 ?',
-          enabled: true,
-        },
-        {
-          name: '123',
-          autoId: '1231231',
-          cron: '10/0 10/0 10/0 10/0 10/0 10/0 ?',
-          enabled: true,
-        },
-        {
-          name: '123',
-          autoId: '1231231',
-          cron: '10/0 10/0 10/0 10/0 10/0 10/0 ?',
-          enabled: true,
-        },
-        {
-          name: '1234',
-          autoId: '1231231',
-          cron: '10/0 10/0 10/0 10/0 10/0 10/0 ?',
-          enabled: true,
-        },
-      ],
+      cronAuto: [],
       eventAuto: [
         {
           name: '卧室等暗了则把厨房的灯打开厨房',
-          autoId: '1231231',
+          id: '1231231',
+          events: [
+            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
+          ],
+          enable: true,
+        },
+        {
+          name: '123',
+          id: '1231231',
+          events: [
+            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
+          ],
+          enable: true,
+        },
+        {
+          name: '123',
+          id: '1231231',
+          events: [
+            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
+          ],
+          enable: true,
+        },
+        {
+          name: '123',
+          id: '1231231',
+          events: [
+            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
+          ],
+          enable: true,
+        },
+        {
+          name: '123',
+          id: '1231231',
           events: [
             'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
           ],
@@ -216,7 +197,7 @@ export default {
         },
         {
           name: '123',
-          autoId: '1231231',
+          id: '1231231',
           events: [
             'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
           ],
@@ -224,7 +205,7 @@ export default {
         },
         {
           name: '123',
-          autoId: '1231231',
+          id: '1231231',
           events: [
             'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
           ],
@@ -232,39 +213,7 @@ export default {
         },
         {
           name: '123',
-          autoId: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enabled: true,
-        },
-        {
-          name: '123',
-          autoId: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enabled: true,
-        },
-        {
-          name: '123',
-          autoId: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enabled: true,
-        },
-        {
-          name: '123',
-          autoId: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enabled: true,
-        },
-        {
-          name: '123',
-          autoId: '1231231',
+          id: '1231231',
           events: [
             'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
           ],
@@ -272,7 +221,7 @@ export default {
         },
         {
           name: '1234',
-          autoId: '1231231',
+          id: '1231231',
           events: [
             'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
           ],
@@ -281,36 +230,58 @@ export default {
       ],
     };
   },
+  created() {
+    this.getAllCronAuto();
+  },
   methods: {
-    handleEditName(row, name) {
-      row.name = name;
+    async getAllCronAuto() {
+      this.cronAuto = await autoApi.getAllAuto('timer');
     },
-    handleEditCron(row, cron) {
-      row.cron = cron;
+    async handleEditName(row, name) {
+      if (await autoApi.modifyName(row.id, name) === true) {
+        this.$message.success('重命名成功');
+        row.name = name;
+      }
+    },
+    async handleEnableChange(row, enable) {
+      if (await autoApi.modifyEnable(row.id, enable) === true) {
+        this.$message.success(`自动化已${row.enable ? '失效' : '生效'}`);
+        row.enable = enable;
+      }
+    },
+    async handleEditCron(row, cron) {
+      if (await autoApi.modifyCron(row.id, cron) === true) {
+        this.$message.success('cron 修改成功');
+        row.cron = cron;
+      }
     },
     handleEventChange(row, event) {
       console.log(row, event);
     },
-    handleAddAuto(type) {
+    async handleAddAuto(type) {
+      const result = await autoApi.add({ type });
+      this.$message.success('添加成功');
       if (type === 0) {
-        this.cronAuto.unshift({
-          name: '默认名称',
-          autoId: '1231231',
-          cron: '请设置',
-          enabled: true,
-        });
-      } else {
+        this.cronAuto.unshift(result);
+      } else if (type === 1) {
         this.eventAuto.unshift({
           name: '默认名称',
-          autoId: '1231231',
+          id: '1231231',
           events: [],
           enabled: true,
         });
       }
     },
-    handleShowCode(e) {
-      console.log(e);
-      this.code = e.toString();
+    async handleShowCode(row) {
+      const code = await autoApi.getCode(row.id);
+
+      if (code === null) {
+        this.code = this.defaultPython;
+      } else {
+        this.code = code;
+      }
+
+      this.editCodeId = row.id;
       this.codeEditor = true;
     },
     handleCodeClose(done) {
@@ -320,19 +291,26 @@ export default {
         })
         .catch(() => {});
     },
-    runOnce() {
-
+    async runOnce() {
+      const data = await autoApi.tryOnce(this.code);
+      this.$notify({
+        title: '返回信息',
+        message: data,
+        type: 'success',
+      });
     },
-    saveCode() {
-
+    async saveCode() {
+      if (await autoApi.modifyCode(this.editCodeId, this.code) === true) {
+        this.$message.success('code 保存成功');
+      }
     },
-    deleteAuto() {
+    async deleteAuto() {
+      if (await autoApi.remove(this.editCodeId) === true) {
+        this.$message.success('删除成功');
+        this.codeEditor = false;
 
-    },
-  },
-  watch: {
-    code() {
-      console.log(this.code);
+        await this.getAllCronAuto();
+      }
     },
   },
 };

@@ -4,6 +4,7 @@ import com.jkk.aihome.entity.DO.HardwareStateDO;
 import com.jkk.aihome.entity.DO.OverviewDO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
 import com.jkk.aihome.enums.StateType;
+import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.exception.StateException;
 import com.jkk.aihome.repository.HardwareStateRepository;
 import com.jkk.aihome.repository.OverviewRepository;
@@ -118,7 +119,7 @@ public class OverviewServiceImpl implements IOverviewService {
 			OverviewDO toStateNode = overviewRepository.findByStateId(toStateId);
 			if (toStateNode.getBeforeId() != null) {
 				OverviewDO beforeToStateNode = overviewRepository.findById(toStateNode.getBeforeId())
-						.orElseThrow(() -> new StateException("overviewDO beforeId没有找到" + toStateNode));
+						.orElseThrow(() -> new IdNotFindException(toStateNode.getBeforeId(), "overviewDO"));
 				beforeToStateNode.setAfterId(stateNode.getId());
 				overviewRepository.save(beforeToStateNode);
 			}
@@ -148,14 +149,14 @@ public class OverviewServiceImpl implements IOverviewService {
 		if (overviewDO != null) {
 			if (overviewDO.getBeforeId() != null) {
 				OverviewDO beforeOverviewDO = overviewRepository.findById(overviewDO.getBeforeId())
-						.orElseThrow(() -> new StateException("overviewDO beforeId没有找到" + overviewDO));
+						.orElseThrow(() -> new IdNotFindException(overviewDO.getBeforeId(), "overviewDO"));
 				beforeOverviewDO.setAfterId(overviewDO.getAfterId());
 				overviewRepository.save(beforeOverviewDO);
 			}
 
 			if (overviewDO.getAfterId() != null) {
 				OverviewDO afterOverviewDO = overviewRepository.findById(overviewDO.getAfterId())
-						.orElseThrow(() -> new StateException("overviewDO afterId没有找到" + overviewDO));
+						.orElseThrow(() -> new IdNotFindException(overviewDO.getAfterId(), "overviewDO"));
 				afterOverviewDO.setBeforeId(overviewDO.getBeforeId());
 				overviewRepository.save(afterOverviewDO);
 			}
@@ -174,14 +175,14 @@ public class OverviewServiceImpl implements IOverviewService {
 
 		if (beforeId != null) {
 			OverviewDO beforeNode = overviewRepository.findById(beforeId)
-					.orElseThrow(() -> new StateException("overviewDO beforeId没有找到" + overviewDO));
+					.orElseThrow(() -> new IdNotFindException(overviewDO.getBeforeId(), "overviewDO"));
 			beforeNode.setAfterId(overviewDO.getId());
 			overviewRepository.save(beforeNode);
 		}
 
 		if (afterId != null) {
 			OverviewDO afterNode = overviewRepository.findById(afterId)
-					.orElseThrow(() -> new StateException("overviewDO afterId没有找到" + overviewDO));
+					.orElseThrow(() -> new IdNotFindException(overviewDO.getAfterId(), "overviewDO"));
 			afterNode.setBeforeId(overviewDO.getId());
 			overviewRepository.save(afterNode);
 		}

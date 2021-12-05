@@ -1,9 +1,8 @@
 package com.jkk.aihome.strategy;
 import com.jkk.aihome.enums.StateType;
 
-import com.jkk.aihome.entity.request.state.OnOffAddStateRequest;
+import com.jkk.aihome.hardware.request.OnOffAddStateRequest;
 import com.jkk.aihome.strategy.state.StateStrategy;
-import org.junit.jupiter.api.AfterAll;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
