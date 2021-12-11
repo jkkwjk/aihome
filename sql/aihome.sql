@@ -11,11 +11,26 @@
  Target Server Version : 80015
  File Encoding         : 65001
 
- Date: 02/12/2021 22:24:32
+ Date: 11/12/2021 12:52:38
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for auto
+-- ----------------------------
+DROP TABLE IF EXISTS `auto`;
+CREATE TABLE `auto`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` tinyint(4) NULL DEFAULT NULL COMMENT '自动化类型',
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '名称',
+  `enable` tinyint(4) NULL DEFAULT NULL COMMENT '是否启用',
+  `code` blob NULL COMMENT '执行代码',
+  `cron` varchar(40) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT 'cron表达式',
+  `events` varchar(1000) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '监听的事件',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for hardware
@@ -31,13 +46,7 @@ CREATE TABLE `hardware`  (
   `heart_time` datetime(0) NULL DEFAULT NULL COMMENT '最后一次心跳时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_dev_id`(`dev_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of hardware
--- ----------------------------
-INSERT INTO `hardware` VALUES (10, 'yPvWSUQc', '测试硬件过期', 'el-icon-switch-button', '48:3f:da:a3:bb:6c', '2021-11-28 13:50:57', '2021-11-28 13:53:16');
-INSERT INTO `hardware` VALUES (16, 'wLshAPDd', '测试硬件', 'el-icon-switch-button', '48:3f:da:a3:bb:6c', '2021-11-28 14:33:55', '2021-11-28 22:34:50');
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for hardware_state
@@ -54,13 +63,7 @@ CREATE TABLE `hardware_state`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_state_id`(`state_id`) USING BTREE,
   INDEX `index_dev_id`(`dev_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of hardware_state
--- ----------------------------
-INSERT INTO `hardware_state` VALUES (10, 'yPvWSUQc', 'yPvWSUQc-0', 0, 1, '状态-开关过期', '2021-11-28 13:53:16');
-INSERT INTO `hardware_state` VALUES (16, 'wLshAPDd', 'wLshAPDd-0', 0, 1, '状态-开关', '2021-11-28 22:34:50');
+) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mode_option
@@ -76,7 +79,7 @@ CREATE TABLE `mode_option`  (
   `color` char(7) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '图标显示颜色',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `index_state_id`(`state_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mode_state
@@ -88,7 +91,7 @@ CREATE TABLE `mode_state`  (
   `state` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '状态',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_state_id`(`state_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for on_off_state
@@ -105,13 +108,7 @@ CREATE TABLE `on_off_state`  (
   `icon_un_active_color` char(7) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '不激活图标的颜色',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_state_id`(`state_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of on_off_state
--- ----------------------------
-INSERT INTO `on_off_state` VALUES (9, 'yPvWSUQc-0', '打开', '关闭', 0, 'el-icon-switch-button', '#000000', '#aabbcc');
-INSERT INTO `on_off_state` VALUES (15, 'wLshAPDd-0', '打开', '关闭', 0, 'el-icon-switch-button', '#000000', '#aabbcc');
+) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for overview
@@ -124,13 +121,7 @@ CREATE TABLE `overview`  (
   `after_id` int(11) NULL DEFAULT NULL COMMENT '后一个id',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_dev_id`(`state_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of overview
--- ----------------------------
-INSERT INTO `overview` VALUES (38, NULL, 'wLshAPDd-0', 39);
-INSERT INTO `overview` VALUES (39, 38, 'yPvWSUQc-0', NULL);
+) ENGINE = InnoDB AUTO_INCREMENT = 52 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for value_state
