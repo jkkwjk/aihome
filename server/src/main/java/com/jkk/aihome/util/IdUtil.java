@@ -28,4 +28,8 @@ public class IdUtil {
 	public static Integer getHardwareIdFromStateId(String stateId) {
 		return Integer.parseInt(stateId.split("-")[1]);
 	}
+
+	public static String generateStateEventId(String stateId) {
+		return "event.state." + stateId;
+	}
 }

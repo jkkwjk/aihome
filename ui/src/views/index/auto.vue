@@ -1,7 +1,7 @@
 <template>
   <div class="auto">
     <el-card style="position:relative;">
-      <span style="font-size: 20px; margin-bottom: 5px;">定时任务 :</span>
+      <span style="font-size: 20px; margin-bottom: 5px;">定时自动化 :</span>
       <div class="item">
         <el-scrollbar>
           <el-table :data="cronAuto.filter((o) => o.name.indexOf(searchAutoText) !== -1)">
@@ -49,7 +49,7 @@
     </el-card>
 
     <el-card style="margin-top: 20px; position:relative;">
-      <span style="font-size: 20px; margin-bottom: 5px;">事件触发任务 :</span>
+      <span style="font-size: 20px; margin-bottom: 5px;">事件触发自动化 :</span>
       <div class="item">
         <el-scrollbar>
           <el-table :data="eventAuto.filter((o) => o.name.indexOf(searchEventText) !== -1)">
@@ -131,6 +131,7 @@
 import CodeView from '@components/auto/CodeView';
 import EditableSpan from '@components/EditableSpan';
 import autoApi from '@/api/AutoApi';
+import eventApi from '@/api/EventApi';
 
 export default {
   name: 'auto',
@@ -154,88 +155,23 @@ export default {
       ],
       defaultPython: initValue,
       cronAuto: [],
-      eventAuto: [
-        {
-          name: '卧室等暗了则把厨房的灯打开厨房',
-          id: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enable: true,
-        },
-        {
-          name: '123',
-          id: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enable: true,
-        },
-        {
-          name: '123',
-          id: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enable: true,
-        },
-        {
-          name: '123',
-          id: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enable: true,
-        },
-        {
-          name: '123',
-          id: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enabled: true,
-        },
-        {
-          name: '123',
-          id: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enabled: true,
-        },
-        {
-          name: '123',
-          id: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enabled: true,
-        },
-        {
-          name: '123',
-          id: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enabled: true,
-        },
-        {
-          name: '1234',
-          id: '1231231',
-          events: [
-            'event.device.abc-1', 'event.device.abc-2', 'event.device.abc-3', 'event.device.abc-4', 'event.device.abc-5',
-          ],
-          enabled: true,
-        },
-      ],
+      eventAuto: [],
     };
   },
   created() {
     this.getAllCronAuto();
+    this.getAllEventAuto();
+    this.getAllEvents();
   },
   methods: {
     async getAllCronAuto() {
       this.cronAuto = await autoApi.getAllAuto('timer');
+    },
+    async getAllEventAuto() {
+      this.eventAuto = await autoApi.getAllAuto('event');
+    },
+    async getAllEvents() {
+      this.allEvent = await eventApi.getAll();
     },
     async handleEditName(row, name) {
       if (await autoApi.modifyName(row.id, name) === true) {
@@ -255,8 +191,13 @@ export default {
         row.cron = cron;
       }
     },
-    handleEventChange(row, event) {
-      console.log(row, event);
+    async handleEventChange(row, event) {
+      if (await autoApi.modifyEvent(row.id, event) === true) {
+        if (event.length === 0) {
+          row.enable = false;
+        }
+        this.$message.success('event 修改成功');
+      }
     },
     async handleAddAuto(type) {
       const result = await autoApi.add({ type });
@@ -264,12 +205,7 @@ export default {
       if (type === 0) {
         this.cronAuto.unshift(result);
       } else if (type === 1) {
-        this.eventAuto.unshift({
-          name: '默认名称',
-          id: '1231231',
-          events: [],
-          enabled: true,
-        });
+        this.eventAuto.unshift(result);
       }
     },
     async handleShowCode(row) {
@@ -310,6 +246,7 @@ export default {
         this.codeEditor = false;
 
         await this.getAllCronAuto();
+        await this.getAllEventAuto();
       }
     },
   },

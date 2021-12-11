@@ -20,6 +20,7 @@ handleMessageFunction = {
                 config.mac = wifi.sta.getmac()
                 
                 send(mqtt_config.topic.DISCOVER, config)
+                canReport = true
             else
                 print("no config.json")
             end
@@ -48,6 +49,7 @@ handleMessageFunction = {
     report = function(data, msg)
         if (msg == "no devId") then
             print("no devId reset")
+            canReport = false
             mqtt_config.devId = nil
             saveMqttConfig()
             mqttClient:subscribe(mqtt_config.topic.DEV,1)

@@ -1,5 +1,6 @@
 package com.jkk.aihome.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.jkk.aihome.entity.DO.AutoDO;
 import com.jkk.aihome.entity.DTO.AutoDTO;
 import com.jkk.aihome.entity.VO.auto.AutoBaseVO;
@@ -18,6 +19,7 @@ import com.jkk.aihome.strategy.state.StateStrategyManagement;
 import com.jkk.aihome.strategy.subscribe.SubscribeStrategyManagement;
 import com.jkk.aihome.util.IdUtil;
 import com.jkk.aihome.util.PythonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.python.core.PyDictionary;
 import org.quartz.CronExpression;
 import org.springframework.beans.BeanUtils;
@@ -25,14 +27,20 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class AutoServiceImpl implements IAutoService {
 	private PyDictionary globals = new PyDictionary();
 	private PyDictionary states = new PyDictionary();
+
+	@Resource
+	private Map<String, Set<AutoDTO>> autoEvent;
 
 	private final AutoRepository autoRepository;
 
@@ -86,8 +94,7 @@ public class AutoServiceImpl implements IAutoService {
 		AutoExecuteStrategy autoExecuteStrategy = autoStrategyManagement.getAutoStrategyByAutoId(autoId);
 		Boolean modifyInMemory;
 		if (enable) {
-			AutoDTO autoDTO = new AutoDTO();
-			BeanUtils.copyProperties(autoDO, autoDTO);
+			AutoDTO autoDTO = buildAutoDTOFromDO(autoDO);
 			modifyInMemory = autoExecuteStrategy.regedit(autoDTO);
 		}else {
 			modifyInMemory = autoExecuteStrategy.unRegedit(autoId);
@@ -118,7 +125,18 @@ public class AutoServiceImpl implements IAutoService {
 		AutoDO autoDO = autoRepository.findById(autoId).orElseThrow(() -> new IdNotFindException(autoId, "auto"));
 		autoDO.setCron(cron);
 
-		return modifyAndRegedit(autoDO);
+		return modifyAutoState(autoDO);
+	}
+
+	@Override
+	public Boolean modifyEventByAutoId(Integer autoId, List<String> event) {
+		AutoDO autoDO = autoRepository.findById(autoId).orElseThrow(() -> new IdNotFindException(autoId, "auto"));
+		autoDO.setEvents(JSON.toJSONString(event));
+		if (event.size() == 0) {
+			autoDO.setEnable(false);
+		}
+
+		return modifyAutoState(autoDO);
 	}
 
 	@Override
@@ -126,20 +144,20 @@ public class AutoServiceImpl implements IAutoService {
 		AutoDO autoDO = autoRepository.findById(autoId).orElseThrow(() -> new IdNotFindException(autoId, "auto"));
 		autoDO.setCode(code);
 
-		return modifyAndRegedit(autoDO);
+		return modifyAutoState(autoDO);
 	}
 
-	private Boolean modifyAndRegedit(AutoDO autoDO) {
+	private Boolean modifyAutoState(AutoDO autoDO) {
 		autoDO = autoRepository.save(autoDO);
 
-		// 如果该定时任务在执行, 则修改重新注册修改后的状态
-		Boolean isModify = true;
+		// 修改自动化在内存中的状态
+		AutoDTO autoDTO = buildAutoDTOFromDO(autoDO);
+		AutoExecuteStrategy autoExecuteStrategy = autoStrategyManagement.getAutoStrategyByAutoType(AutoType.of(autoDO.getType()));
 		if (autoDO.getEnable()) {
-			AutoDTO autoDTO = new AutoDTO();
-			BeanUtils.copyProperties(autoDO, autoDTO);
-			isModify = autoStrategyManagement.getAutoStrategyByAutoType(AutoType.of(autoDO.getType())).regedit(autoDTO);
+			return autoExecuteStrategy.regedit(autoDTO);
+		}else {
+			return autoExecuteStrategy.unRegedit(autoDTO.getId());
 		}
-		return isModify;
 	}
 
 	@Override
@@ -158,8 +176,7 @@ public class AutoServiceImpl implements IAutoService {
 			AutoExecuteStrategy autoExecuteStrategy = autoStrategyManagement.getAutoStrategyByAutoType(AutoType.of(type));
 
 			autoDOList.forEach(autoDO -> {
-				AutoDTO autoDTO = new AutoDTO();
-				BeanUtils.copyProperties(autoDO, autoDTO);
+				AutoDTO autoDTO = buildAutoDTOFromDO(autoDO);
 				autoExecuteStrategy.regedit(autoDTO);
 			});
 		});
@@ -175,7 +192,19 @@ public class AutoServiceImpl implements IAutoService {
 			stateReportRequest.getStates().forEach(hardwareState -> {
 				String stateId = IdUtil.getStateIdFromDevIdAndId(stateReportRequest.getDevId(), hardwareState.getId());
 				states.put(stateId, hardwareState.getState());
+
+				// 触发事件驱动自动化
+				Set<AutoDTO> autoDTOSet = autoEvent.getOrDefault(IdUtil.generateStateEventId(stateId), new HashSet<>());
+				autoDTOSet.forEach(autoDTO -> log.info("触发事件状态ID: {}, 事件自动化任务输出结果: {}", stateId, this.runCode(autoDTO.getCode())));
 			});
 		});
+	}
+
+	private AutoDTO buildAutoDTOFromDO(AutoDO autoDO) {
+		AutoDTO autoDTO = new AutoDTO();
+		BeanUtils.copyProperties(autoDO, autoDTO);
+		autoDTO.setEvents(JSON.parseArray(autoDO.getEvents(), String.class));
+
+		return autoDTO;
 	}
 }

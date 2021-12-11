@@ -61,6 +61,7 @@ function connectSuccess()
     else
         -- reconnect
         send(mqtt_config.topic.REPORT, reportAllState())
+        canReport = true -- gpio.lua
     end
     
     

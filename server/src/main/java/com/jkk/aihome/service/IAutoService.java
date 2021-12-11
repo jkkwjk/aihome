@@ -20,6 +20,8 @@ public interface IAutoService {
 
 	Boolean modifyCronByAutoId(Integer autoId, String cron);
 
+	Boolean modifyEventByAutoId(Integer autoId, List<String> event);
+
 	Boolean modifyCodeByAutoId(Integer autoId, String code);
 
 	Boolean deleteByAutoId(Integer autoId);

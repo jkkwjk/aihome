@@ -61,6 +61,15 @@ public class AutoController {
 		return R.ok(autoService.modifyNameByAutoId(autoId, name));
 	}
 
+	@PutMapping("/event/{autoId}")
+	public R<Boolean> modifyEventByAutoId(@PathVariable Integer autoId, @RequestBody List<String> events) {
+		if (autoService.modifyEventByAutoId(autoId, events)) {
+			return R.ok(true);
+		}else {
+			return R.error("修改 events 失败");
+		}
+	}
+
 	@PutMapping("/cron/{autoId}")
 	public R<Boolean> modifyCronByAutoId(@PathVariable Integer autoId, String cron) {
 		if (autoService.modifyCronByAutoId(autoId, cron)) {

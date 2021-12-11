@@ -30,6 +30,10 @@ class AutoApi extends BaseApi {
     return axios.put(`/${this.prefix}/cron/${id}`, { cron });
   }
 
+  modifyEvent(id, events) {
+    return axios.put(`/${this.prefix}/event/${id}`, events, { headers: { 'Content-Type': 'application/json' } });
+  }
+
   modifyCode(id, code) {
     return axios.put(`/${this.prefix}/code/${id}`, { code });
   }
