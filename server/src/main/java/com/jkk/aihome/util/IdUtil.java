@@ -4,7 +4,7 @@ public class IdUtil {
 	private final static String dict = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 	public static String generateDevId() {
-		long time = System.nanoTime();
+		long time = System.currentTimeMillis();
 		int radix = dict.length() - 1;
 		StringBuilder result = new StringBuilder();
 		while(time > 0) {

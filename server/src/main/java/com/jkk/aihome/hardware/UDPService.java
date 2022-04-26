@@ -64,11 +64,7 @@ public class UDPService {
 
 	private MqttConfigResponse buildMqttConfigVO() {
 		MqttConfigResponse mqttConfigResponse = new MqttConfigResponse();
-		String url = mqttConfig.getUrl().split("//")[1];
-		if (url.contains("localhost") || url.contains("127.0.0.1")) {
-			url = mqttConfig.getAddress();
-		}
-		String[] splitRes = url.split(":");
+		String[] splitRes = mqttConfig.getAddress().split(":");
 		mqttConfigResponse.setAddress(splitRes[0]);
 		mqttConfigResponse.setPort(splitRes[1]);
 		mqttConfigResponse.setTopic(Arrays.stream(TopicNameEnum.values()).collect(Collectors.toMap(Enum::toString, TopicNameEnum::getName)));

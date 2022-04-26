@@ -12,5 +12,5 @@ spring:
     password: 123456
 
 mqtt:
-  address: 192.168.1.108:1883
+  address: pi.com:1883
   keep-alive-time: 30

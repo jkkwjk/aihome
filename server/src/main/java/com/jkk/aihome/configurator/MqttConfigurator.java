@@ -24,7 +24,7 @@ public class MqttConfigurator {
 
 	@Bean
 	public MqttClient mqttClient() throws MqttException {
-		MqttClient mqttClient = new MqttClient(mqttConfig.getUrl(), "server-" + System.getProperty("user.name"), new MemoryPersistence());
+		MqttClient mqttClient = new MqttClient("tcp://" + mqttConfig.getAddress(), "server-" + System.getProperty("user.name"), new MemoryPersistence());
 		MqttConnectOptions options = new MqttConnectOptions();
 		options.setKeepAliveInterval(mqttConfig.getKeepAliveTime());
 		options.setCleanSession(false);
