@@ -28,6 +28,7 @@ public class MqttConfigurator {
 		MqttConnectOptions options = new MqttConnectOptions();
 		options.setKeepAliveInterval(mqttConfig.getKeepAliveTime());
 		options.setCleanSession(false);
+		options.setAutomaticReconnect(true);
 		mqttClient.connect(options);
 		subscribeStrategyManagement.getSubscribeStrategies().forEach(subscribeStrategy -> {
 			try {

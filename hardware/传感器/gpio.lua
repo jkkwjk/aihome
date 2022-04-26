@@ -48,9 +48,9 @@ deTwitteInt(gpio_sun, 1000, function(ret)
 end)
 deTwitteInt(gpio_door, 1000, function(ret)
     if (ret == 0) then
-        states[2] = true
-    else
         states[2] = false
+    else
+        states[2] = true
     end
     if (canReport) then
         payload = {
