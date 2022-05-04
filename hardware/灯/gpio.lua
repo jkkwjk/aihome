@@ -38,6 +38,7 @@ end
 
 -- do sth when control cmd recived
 function handleControl(messageId, id, value)
+    print("receive")
     if value then
         turnOn()
     else

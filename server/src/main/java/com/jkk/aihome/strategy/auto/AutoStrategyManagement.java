@@ -2,7 +2,7 @@ package com.jkk.aihome.strategy.auto;
 
 import com.jkk.aihome.enums.AutoType;
 import com.jkk.aihome.exception.IdNotFindException;
-import com.jkk.aihome.repository.AutoRepository;
+import com.jkk.aihome.datainject.AutoRepository;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

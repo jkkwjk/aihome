@@ -5,7 +5,7 @@ import com.jkk.aihome.entity.DTO.AutoDTO;
 import com.jkk.aihome.entity.VO.auto.AutoBaseVO;
 import com.jkk.aihome.entity.VO.auto.AutoTimerVO;
 import com.jkk.aihome.enums.AutoType;
-import com.jkk.aihome.repository.AutoRepository;
+import com.jkk.aihome.datainject.AutoRepository;
 import com.jkk.aihome.util.ScheduleUtil;
 import org.quartz.CronExpression;
 import org.quartz.Scheduler;
@@ -42,11 +42,11 @@ public class AutoTimerExecuteStrategy implements AutoExecuteStrategy{
 		Integer autoId = autoDTO.getId();
 		if (autoTimer.containsKey(autoId)) {
 			// 删除老的定时任务
-			ScheduleUtil.deleteScheduleJob(scheduler, autoId);
+			ScheduleUtil.deleteAutoScheduleJob(scheduler, autoId);
 		}
 
 		autoTimer.put(autoId, autoDTO);
-		ScheduleUtil.createScheduleJob(scheduler, autoDTO);
+		ScheduleUtil.createAutoScheduleJob(scheduler, autoDTO);
 		return true;
 	}
 
@@ -54,7 +54,7 @@ public class AutoTimerExecuteStrategy implements AutoExecuteStrategy{
 	public Boolean unRegedit(Integer id) {
 		if (autoTimer.containsKey(id)) {
 			autoTimer.remove(id);
-			ScheduleUtil.deleteScheduleJob(scheduler, id);
+			ScheduleUtil.deleteAutoScheduleJob(scheduler, id);
 		}
 		return true;
 	}

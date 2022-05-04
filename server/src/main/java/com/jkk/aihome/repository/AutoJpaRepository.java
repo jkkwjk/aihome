@@ -7,8 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AutoRepository extends JpaRepository<AutoDO, Integer> {
-	List<AutoDO> findAllByEnableTrue();
-
-	List<AutoDO> findByTypeOrderByIdDesc(Integer type);
+public interface AutoJpaRepository extends JpaRepository<AutoDO, Integer> {
 }

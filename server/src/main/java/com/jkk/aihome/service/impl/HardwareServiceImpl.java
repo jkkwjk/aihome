@@ -3,6 +3,7 @@ import java.util.Date;
 
 import com.jkk.aihome.entity.DO.HardwareDO;
 import com.jkk.aihome.entity.VO.HardwareWithStateVO;
+import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.hardware.request.DiscoverRequest;
 import com.jkk.aihome.hardware.request.StateReportRequest;
 import com.jkk.aihome.repository.HardwareRepository;
@@ -45,7 +46,7 @@ public class HardwareServiceImpl implements IHardwareService {
 
 	@Override
 	public Boolean updateHardwareNameByDevId(String devId, String name) {
-		HardwareDO hardwareDO = hardwareRepository.findByDevId(devId);
+		HardwareDO hardwareDO = hardwareRepository.findById(devId).orElseThrow(() -> new IdNotFindException(devId, "hardware"));
 		hardwareDO.setName(name);
 		return hardwareRepository.save(hardwareDO).getName().equals(name);
 	}
@@ -55,7 +56,7 @@ public class HardwareServiceImpl implements IHardwareService {
 	public void deleteHardwareByDevId(String devId) {
 		overviewService.deleteAllOverviewByDevId(devId);
 		stateService.deleteAllStateByDevId(devId);
-		hardwareRepository.removeByDevId(devId);
+		hardwareRepository.deleteById(devId);
 	}
 
 	@Transactional
@@ -65,20 +66,19 @@ public class HardwareServiceImpl implements IHardwareService {
 		BeanUtils.copyProperties(discoverRequest, hardwareDO);
 		hardwareDO.setDiscoverTime(new Date());
 		hardwareDO.setHeartTime(new Date());
-		hardwareDO = hardwareRepository.save(hardwareDO);
+		hardwareRepository.save(hardwareDO);
 
 		// 添加状态
-		boolean addStateResult = discoverRequest.getStates().stream()
+		return discoverRequest.getStates().stream()
 				.map(stateJson -> stateService.addState(stateJson, discoverRequest.getDevId()))
 				.allMatch((result) -> result.equals(true));
-
-		return addStateResult && hardwareDO.getId() != null;
 	}
 
 	@Transactional
 	@Override
 	public Boolean reportStateProcess(StateReportRequest stateReportRequest) {
-		HardwareDO hardwareDO = hardwareRepository.findByDevId(stateReportRequest.getDevId());
+		String devId = stateReportRequest.getDevId();
+		HardwareDO hardwareDO = hardwareRepository.findById(devId).orElseThrow(() -> new IdNotFindException(devId, "hardware"));
 		if (hardwareDO == null) {
 			return false;
 		}

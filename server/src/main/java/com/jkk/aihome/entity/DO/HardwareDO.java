@@ -12,9 +12,6 @@ import java.util.Date;
 @Entity(name = "hardware")
 public class HardwareDO {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-
 	private String devId;
 
 	private String name;

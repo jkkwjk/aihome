@@ -1,8 +1,11 @@
 package com.jkk.aihome.util;
 
+import com.jkk.aihome.datainject.IDataHolder;
 import com.jkk.aihome.entity.DTO.AutoDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
+
+import java.util.UUID;
 
 /**
  * 定时任务工具类
@@ -22,7 +25,7 @@ public class ScheduleUtil {
     /**
      * 获取jobKey
      */
-    public static JobKey getJobKey(Integer jobId) {
+    public static JobKey getAutoJobKey(Integer jobId) {
         return JobKey.jobKey(JOB_NAME + jobId);
     }
 
@@ -41,10 +44,10 @@ public class ScheduleUtil {
     /**
      * 创建定时任务
      */
-    public static void createScheduleJob(Scheduler scheduler, AutoDTO scheduleJob) {
+    public static void createAutoScheduleJob(Scheduler scheduler, AutoDTO scheduleJob) {
         try {
         	//构建job信息
-            JobDetail jobDetail = JobBuilder.newJob(ScheduleJobUtil.class).withIdentity(getJobKey(scheduleJob.getId())).build();
+            JobDetail jobDetail = JobBuilder.newJob(ScheduleJobUtil.class).withIdentity(getAutoJobKey(scheduleJob.getId())).build();
 
             //表达式调度构建器
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(scheduleJob.getCron())
@@ -61,10 +64,31 @@ public class ScheduleUtil {
         }
     }
 
+    public static void createPersistenceScheduleJob(Scheduler scheduler, String cron, IDataHolder<?, ?> dataHolder) {
+        try {
+            //构建job信息
+            String uuid = UUID.randomUUID().toString();
+            JobDetail jobDetail = JobBuilder.newJob(ScheduleJobUtil.class).withIdentity(JobKey.jobKey(uuid)).build();
+
+            //表达式调度构建器
+            CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cron)
+                    .withMisfireHandlingInstructionDoNothing();
+
+            //按新的cronExpression表达式构建一个新的trigger
+            CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(TriggerKey.triggerKey(uuid)).withSchedule(scheduleBuilder).build();
+
+            jobDetail.getJobDataMap().put("persistence", dataHolder);
+
+            scheduler.scheduleJob(jobDetail, trigger);
+        } catch (SchedulerException e) {
+            log.error("创建定时任务失败", e);
+        }
+    }
+
     /**
      * 更新定时任务
      */
-    public static void updateScheduleJob(Scheduler scheduler, AutoDTO scheduleJob) {
+    public static void updateAutoScheduleJob(Scheduler scheduler, AutoDTO scheduleJob) {
         try {
             TriggerKey triggerKey = getTriggerKey(scheduleJob.getId());
 
@@ -86,9 +110,9 @@ public class ScheduleUtil {
     /**
      * 立即执行任务
      */
-    public static void run(Scheduler scheduler, AutoDTO scheduleJob) {
+    public static void run(Scheduler scheduler, String id) {
         try {
-            scheduler.triggerJob(getJobKey(scheduleJob.getId()));
+            scheduler.triggerJob(JobKey.jobKey(id));
         } catch (SchedulerException e) {
             log.error("立即执行定时任务失败", e);
         }
@@ -97,9 +121,9 @@ public class ScheduleUtil {
     /**
      * 删除定时任务
      */
-    public static void deleteScheduleJob(Scheduler scheduler, Integer jobId) {
+    public static void deleteAutoScheduleJob(Scheduler scheduler, Integer jobId) {
         try {
-            scheduler.deleteJob(getJobKey(jobId));
+            scheduler.deleteJob(getAutoJobKey(jobId));
         } catch (SchedulerException e) {
             log.error("删除定时任务失败", e);
         }

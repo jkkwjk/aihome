@@ -6,13 +6,12 @@ import com.jkk.aihome.entity.DTO.AutoDTO;
 import com.jkk.aihome.entity.VO.auto.AutoBaseVO;
 import com.jkk.aihome.entity.VO.auto.AutoEventVO;
 import com.jkk.aihome.enums.AutoType;
-import com.jkk.aihome.repository.AutoRepository;
+import com.jkk.aihome.datainject.AutoRepository;
 import org.python.netty.util.internal.ConcurrentSet;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

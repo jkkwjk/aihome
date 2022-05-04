@@ -9,7 +9,7 @@ import com.jkk.aihome.enums.AutoType;
 import com.jkk.aihome.enums.TopicNameEnum;
 import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.hardware.request.StateReportRequest;
-import com.jkk.aihome.repository.AutoRepository;
+import com.jkk.aihome.datainject.AutoRepository;
 import com.jkk.aihome.service.IAutoService;
 import com.jkk.aihome.service.IHardwareService;
 import com.jkk.aihome.service.IMqttService;
@@ -24,6 +24,7 @@ import org.python.core.PyDictionary;
 import org.quartz.CronExpression;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -36,8 +37,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class AutoServiceImpl implements IAutoService {
-	private PyDictionary globals = new PyDictionary();
-	private PyDictionary states = new PyDictionary();
+	private final PyDictionary globals = new PyDictionary();
+	private final PyDictionary states = new PyDictionary();
 
 	@Resource
 	private Map<String, Set<AutoDTO>> autoEvent;
@@ -92,10 +93,12 @@ public class AutoServiceImpl implements IAutoService {
 		// 真正的启用或者关闭自动化
 		AutoDO autoDO = autoRepository.findById(autoId).orElseThrow(() -> new IdNotFindException(autoId, "auto"));
 		AutoExecuteStrategy autoExecuteStrategy = autoStrategyManagement.getAutoStrategyByAutoId(autoId);
-		Boolean modifyInMemory;
+		Boolean modifyInMemory = false;
 		if (enable) {
-			AutoDTO autoDTO = buildAutoDTOFromDO(autoDO);
-			modifyInMemory = autoExecuteStrategy.regedit(autoDTO);
+			if (StringUtils.hasText(autoDO.getCode())) {
+				AutoDTO autoDTO = buildAutoDTOFromDO(autoDO);
+				modifyInMemory = autoExecuteStrategy.regedit(autoDTO);
+			}
 		}else {
 			modifyInMemory = autoExecuteStrategy.unRegedit(autoId);
 		}

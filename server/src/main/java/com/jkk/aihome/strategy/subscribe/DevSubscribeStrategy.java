@@ -14,11 +14,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class DevSubscribeStrategy extends SubscribeStrategy {
-	@Lazy
-	@Autowired
-	private MqttClient mqttClient;
-
-
 	@Override
 	public TopicNameEnum getMatchTopic() {
 		return TopicNameEnum.DEV;
@@ -26,7 +21,7 @@ public class DevSubscribeStrategy extends SubscribeStrategy {
 
 	@Override
 	@ReceiveMsgNotPCSend
-	public void messageArrived(String topic, MqttMessage message) throws Exception {
+	public void messageArrived(String topic, MqttMessage message) {
 		this.setChanged();
 		this.notifyObservers(JSON.parseObject(String.valueOf(message), GetDevIdRequest.class));
 	}
