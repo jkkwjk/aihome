@@ -5,6 +5,7 @@ import com.jkk.aihome.entity.DO.HardwareStateDO;
 import com.jkk.aihome.entity.DO.OnOffStateDO;
 import com.jkk.aihome.entity.VO.state.OnOffStateDetailVO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
+import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.hardware.request.AddStateRequest;
 import com.jkk.aihome.hardware.request.OnOffAddStateRequest;
 import com.jkk.aihome.enums.StateType;
@@ -35,7 +36,7 @@ public class OnOffStrategy extends StateStrategy {
 		OnOffStateDetailVO onOffStateDetailVO = new OnOffStateDetailVO();
 		super.copyHardwareStateDOProperties(onOffStateDetailVO, stateId);
 
-		OnOffStateDO onOffStateDO = onOffStateRepository.findByStateId(stateId);
+		OnOffStateDO onOffStateDO = onOffStateRepository.findById(stateId).orElseThrow(() -> new IdNotFindException(stateId, "on_off_state"));
 		BeanUtils.copyProperties(onOffStateDO, onOffStateDetailVO);
 
 		onOffStateDetailVO.setType(StateType.ON_OFF);
@@ -45,12 +46,17 @@ public class OnOffStrategy extends StateStrategy {
 
 	@Override
 	public String getStringState(String stateId) {
-		return onOffStateRepository.findByStateId(stateId).getState().toString();
+		return onOffStateRepository.findById(stateId)
+				.map(OnOffStateDO::getState)
+				.map(Object::toString)
+				.orElseThrow(() -> new IdNotFindException(stateId, "on_off_state"));
 	}
 
 	@Override
 	public String getShowInHardwareIcon(String stateId) {
-		return onOffStateRepository.findByStateId(stateId).getIcon();
+		return onOffStateRepository.findById(stateId)
+				.map(OnOffStateDO::getIcon)
+				.orElseThrow(() -> new IdNotFindException(stateId, "on_off_state"));
 	}
 
 	@Override
@@ -62,11 +68,11 @@ public class OnOffStrategy extends StateStrategy {
 		BeanUtils.copyProperties(onOffAddStateRequest, onOffStateDO);
 		String stateId = super.generateStateIdByDevId(onOffAddStateRequest.getDevId());
 		onOffStateDO.setStateId(stateId);
-		onOffStateDO = onOffStateRepository.save(onOffStateDO);
+		onOffStateRepository.save(onOffStateDO);
 
 		HardwareStateDO hardwareStateDO = super.buildHardwareStateDOFromAddStateRequest(onOffAddStateRequest, stateId, StateType.ON_OFF);
-		hardwareStateDO = hardwareStateRepository.save(hardwareStateDO);
-		return onOffStateDO.getId() != null && hardwareStateDO.getId() != null;
+		hardwareStateRepository.save(hardwareStateDO);
+		return true;
 	}
 
 	@Override
@@ -83,7 +89,7 @@ public class OnOffStrategy extends StateStrategy {
 
 	@Override
 	public void updateState(String stateId, Object state) {
-		OnOffStateDO onOffStateDO = onOffStateRepository.findByStateId(stateId);
+		OnOffStateDO onOffStateDO = onOffStateRepository.findById(stateId).orElseThrow(() -> new IdNotFindException(stateId, "on_off_state"));
 		onOffStateDO.setState((Boolean) state);
 		onOffStateRepository.save(onOffStateDO);
 	}

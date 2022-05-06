@@ -6,6 +6,7 @@ import com.jkk.aihome.entity.DO.ValueStateDO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
 import com.jkk.aihome.entity.VO.state.ValueStateDetailVO;
 import com.jkk.aihome.entity.ValueConfig;
+import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.hardware.request.AddStateRequest;
 import com.jkk.aihome.hardware.request.ValueAddStateRequest;
 import com.jkk.aihome.enums.StateType;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class ValueStrategy extends StateStrategy{
@@ -36,7 +38,7 @@ public class ValueStrategy extends StateStrategy{
 		ValueStateDetailVO valueStateDetailVO = new ValueStateDetailVO();
 		super.copyHardwareStateDOProperties(valueStateDetailVO, stateId);
 
-		ValueStateDO valueStateDO = valueStateRepository.findByStateId(stateId);
+		ValueStateDO valueStateDO = valueStateRepository.findById(stateId).orElseThrow(() -> new IdNotFindException(stateId, "value_state"));
 		BeanUtils.copyProperties(valueStateDO, valueStateDetailVO);
 		ValueConfig valueConfig = new ValueConfig();
 		BeanUtils.copyProperties(valueStateDO, valueConfig);
@@ -49,12 +51,17 @@ public class ValueStrategy extends StateStrategy{
 
 	@Override
 	public String getStringState(String stateId) {
-		return valueStateRepository.findByStateId(stateId).getState().toString();
+		return valueStateRepository.findById(stateId)
+				.map(ValueStateDO::getState)
+				.map(Objects::toString)
+				.orElseThrow(() -> new IdNotFindException(stateId, "value_state"));
 	}
 
 	@Override
 	public String getShowInHardwareIcon(String stateId) {
-		return valueStateRepository.findByStateId(stateId).getIcon();
+		return valueStateRepository.findById(stateId)
+				.map(ValueStateDO::getIcon)
+				.orElseThrow(() -> new IdNotFindException(stateId, "value_state"));
 	}
 
 	@Override
@@ -68,11 +75,11 @@ public class ValueStrategy extends StateStrategy{
 		valueStateDO.setStateId(stateId);
 
 		BeanUtils.copyProperties(valueAddStateRequest.getConfig(), valueStateDO);
-		valueStateDO = valueStateRepository.save(valueStateDO);
+		valueStateRepository.save(valueStateDO);
 
 		HardwareStateDO hardwareStateDO = super.buildHardwareStateDOFromAddStateRequest(valueAddStateRequest, stateId, StateType.VALUE);
-		hardwareStateDO = hardwareStateRepository.save(hardwareStateDO);
-		return valueStateDO.getId() != null && hardwareStateDO.getId() != null;
+		hardwareStateRepository.save(hardwareStateDO);
+		return true;
 	}
 
 	@Override
@@ -89,7 +96,7 @@ public class ValueStrategy extends StateStrategy{
 
 	@Override
 	public void updateState(String stateId, Object state) {
-		ValueStateDO valueStateDO = valueStateRepository.findByStateId(stateId);
+		ValueStateDO valueStateDO = valueStateRepository.findById(stateId).orElseThrow(() -> new IdNotFindException(stateId, "value_state"));
 		valueStateDO.setState((Integer) state);
 		valueStateRepository.save(valueStateDO);
 	}

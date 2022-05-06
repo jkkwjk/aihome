@@ -7,6 +7,7 @@ import com.jkk.aihome.entity.DO.modestate.ModeStateDO;
 import com.jkk.aihome.entity.ModeOption;
 import com.jkk.aihome.entity.VO.state.ModeStateDetailVO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
+import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.hardware.request.AddStateRequest;
 import com.jkk.aihome.hardware.request.ModeAddStateRequest;
 import com.jkk.aihome.enums.StateType;
@@ -42,7 +43,7 @@ public class ModeStrategy extends StateStrategy{
 		ModeStateDetailVO modeStateDetailVO = new ModeStateDetailVO();
 		super.copyHardwareStateDOProperties(modeStateDetailVO, stateId);
 
-		ModeStateDO modeStateDO = modeStateRepository.findByStateId(stateId);
+		ModeStateDO modeStateDO = modeStateRepository.findById(stateId).orElseThrow(() -> new IdNotFindException(stateId, "mode_state"));
 		modeStateDetailVO.setType(StateType.MODE);
 		modeStateDetailVO.setState(modeStateDO.getState());
 
@@ -60,12 +61,12 @@ public class ModeStrategy extends StateStrategy{
 
 	@Override
 	public String getStringState(String stateId) {
-		return modeStateRepository.findByStateId(stateId).getState();
+		return modeStateRepository.findById(stateId).map(ModeStateDO::getState).orElseThrow(() -> new IdNotFindException(stateId, "mode_state"));
 	}
 
 	@Override
 	public String getShowInHardwareIcon(String stateId) {
-		String modeValue = modeStateRepository.findByStateId(stateId).getState();
+		String modeValue = modeStateRepository.findById(stateId).map(ModeStateDO::getState).orElseThrow(() -> new IdNotFindException(stateId, "mode_state"));
 		return modeOptionRepository.findByStateIdAndModeValue(stateId, modeValue).getIcon();
 	}
 
@@ -78,7 +79,7 @@ public class ModeStrategy extends StateStrategy{
 		ModeStateDO modeStateDO = new ModeStateDO();
 		modeStateDO.setStateId(stateId);
 		modeStateDO.setState(modeAddStateRequest.getState());
-		modeStateDO = modeStateRepository.save(modeStateDO);
+		modeStateRepository.save(modeStateDO);
 
 
 		List<ModeOptionDO> modeOptionDOList = modeAddStateRequest.getOptions().entrySet().stream()
@@ -96,10 +97,9 @@ public class ModeStrategy extends StateStrategy{
 		modeOptionDOList = modeOptionRepository.saveAll(modeOptionDOList);
 
 		HardwareStateDO hardwareStateDO = super.buildHardwareStateDOFromAddStateRequest(modeAddStateRequest, stateId, StateType.MODE);
-		hardwareStateDO = hardwareStateRepository.save(hardwareStateDO);
+		hardwareStateRepository.save(hardwareStateDO);
 
-		return modeStateDO.getId() != null && hardwareStateDO.getId() != null
-				&& modeOptionDOList.stream().allMatch(o -> o.getId() != null);
+		return modeOptionDOList.stream().allMatch(o -> o.getId() != null);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class ModeStrategy extends StateStrategy{
 
 	@Override
 	public void updateState(String stateId, Object state) {
-		ModeStateDO modeStateDO = modeStateRepository.findByStateId(stateId);
+		ModeStateDO modeStateDO = modeStateRepository.findById(stateId).orElseThrow(() -> new IdNotFindException(stateId, "mode_state"));
 		modeStateDO.setState((String) state);
 		modeStateRepository.save(modeStateDO);
 	}

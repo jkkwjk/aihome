@@ -8,12 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface HardwareStateRepository extends JpaRepository<HardwareStateDO, Integer> {
+public interface HardwareStateRepository extends JpaRepository<HardwareStateDO, String> {
 	List<HardwareStateDO> findAllByDevIdOrderByReportTimeDesc(String devId);
 
-	HardwareStateDO findByStateId(String stateId);
-
-	Optional<HardwareStateDO> findFirstByDevIdOrderByIdDesc(String devId);
+	Optional<HardwareStateDO> findFirstByDevIdOrderByStateIdDesc(String devId);
 
 	Integer removeAllByDevId(String devId);
 }

@@ -11,9 +11,6 @@ import javax.persistence.Id;
 @Entity(name = "mode_state")
 public class ModeStateDO {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-
 	private String stateId;
 
 	private String state;

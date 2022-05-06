@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 
 @Repository
-public interface ValueStateRepository extends JpaRepository<ValueStateDO, Integer> {
-	ValueStateDO findByStateId(String stateId);
-
+public interface ValueStateRepository extends JpaRepository<ValueStateDO, String> {
 	Integer removeAllByStateIdIn(Collection<String> stateId);
 }

@@ -1,7 +1,9 @@
 package com.jkk.aihome.strategy.state;
 
+import com.jkk.aihome.entity.DO.HardwareStateDO;
 import com.jkk.aihome.enums.StateExceptionEnum;
 import com.jkk.aihome.enums.StateType;
+import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.exception.StateException;
 import com.jkk.aihome.repository.HardwareStateRepository;
 import org.springframework.beans.BeansException;
@@ -27,7 +29,7 @@ public class StateStrategyManagement implements ApplicationContextAware {
 	}
 
 	public StateStrategy getStateStrategyByStateId(String stateId) {
-		return this.getStateStrategyByStateType(StateType.of(hardwareStateRepository.findByStateId(stateId).getType()));
+		return this.getStateStrategyByStateType(StateType.of(hardwareStateRepository.findById(stateId).map(HardwareStateDO::getType).orElseThrow(() -> new IdNotFindException(stateId, "hardware_state"))));
 	}
 
 	public StateStrategy getStateStrategyByStateType(StateType stateType) {

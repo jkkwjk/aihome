@@ -15,12 +15,9 @@ import java.util.Date;
 @Entity(name = "hardware_state")
 public class HardwareStateDO {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private String stateId;
 
 	private String devId;
-
-	private String stateId;
 
 	private Integer type;
 

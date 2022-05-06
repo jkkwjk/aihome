@@ -11,9 +11,6 @@ import javax.persistence.Id;
 @Entity(name = "on_off_state")
 public class OnOffStateDO {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-
 	private String stateId;
 
 	private String textActive;

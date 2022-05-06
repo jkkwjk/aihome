@@ -2,6 +2,7 @@ package com.jkk.aihome.strategy.state;
 
 import com.jkk.aihome.entity.DO.HardwareStateDO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
+import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.hardware.request.AddStateRequest;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.repository.HardwareStateRepository;
@@ -38,7 +39,7 @@ public abstract class StateStrategy {
 
 
 	protected String generateStateIdByDevId(String devId) {
-		return hardwareStateRepository.findFirstByDevIdOrderByIdDesc(devId)
+		return hardwareStateRepository.findFirstByDevIdOrderByStateIdDesc(devId)
 				.map(HardwareStateDO::getStateId)
 				.map(stateId -> stateId.split("-")[1])
 				.map(Integer::valueOf)
@@ -48,7 +49,7 @@ public abstract class StateStrategy {
 	}
 
 	protected void copyHardwareStateDOProperties(StateDetailVO stateDetailVO, String stateId) {
-		HardwareStateDO hardwareStateDO = hardwareStateRepository.findByStateId(stateId);
+		HardwareStateDO hardwareStateDO = hardwareStateRepository.findById(stateId).orElseThrow(() -> new IdNotFindException(stateId, "hardware_state"));
 		BeanUtils.copyProperties(hardwareStateDO, stateDetailVO);
 	}
 

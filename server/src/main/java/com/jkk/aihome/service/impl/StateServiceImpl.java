@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.jkk.aihome.entity.DO.HardwareStateDO;
 import com.jkk.aihome.entity.VO.state.StateDetailVO;
 import com.jkk.aihome.entity.VO.StateVO;
+import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.hardware.request.AddStateRequest;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.repository.HardwareStateRepository;
@@ -69,7 +70,7 @@ public class StateServiceImpl implements IStateService {
 
 	@Override
 	public Boolean updateStateNameByStateId(String stateId, String name) {
-		HardwareStateDO hardwareStateDO = hardwareStateRepository.findByStateId(stateId);
+		HardwareStateDO hardwareStateDO = hardwareStateRepository.findById(stateId).orElseThrow(() -> new IdNotFindException(stateId, "hardware_state"));
 		hardwareStateDO.setName(name);
 		return hardwareStateRepository.save(hardwareStateDO).getName().equals(name);
 	}
@@ -98,7 +99,7 @@ public class StateServiceImpl implements IStateService {
 	@Transactional
 	@Override
 	public void updateState(String stateId, Object state) {
-		HardwareStateDO hardwareStateDO = hardwareStateRepository.findByStateId(stateId);
+		HardwareStateDO hardwareStateDO = hardwareStateRepository.findById(stateId).orElseThrow(() -> new IdNotFindException(stateId, "hardware_state"));
 		hardwareStateDO.setReportTime(new Date());
 		hardwareStateRepository.save(hardwareStateDO);
 
