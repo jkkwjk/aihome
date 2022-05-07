@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface HardwareRepository extends JpaRepository<HardwareDO, String> {
+public interface HardwareJpaRepository extends JpaRepository<HardwareDO, String> {
 }

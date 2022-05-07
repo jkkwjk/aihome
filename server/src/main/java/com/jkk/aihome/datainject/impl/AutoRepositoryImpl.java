@@ -1,9 +1,8 @@
 package com.jkk.aihome.datainject.impl;
 
-import com.jkk.aihome.datainject.impl.DataHolderImpl;
-import com.jkk.aihome.repository.AutoJpaRepository;
-import com.jkk.aihome.entity.DO.AutoDO;
 import com.jkk.aihome.datainject.AutoRepository;
+import com.jkk.aihome.entity.DO.AutoDO;
+import com.jkk.aihome.repository.AutoJpaRepository;
 import org.quartz.Scheduler;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +27,7 @@ public class AutoRepositoryImpl extends DataHolderImpl<AutoDO, Integer> implemen
 	public List<AutoDO> findByTypeOrderByIdDesc(Integer type) {
 		return super.findAll().stream()
 				.filter(autoDO -> autoDO.getType().equals(type))
-				.sorted(Comparator.comparing(AutoDO::getId))
+				.sorted(Comparator.comparing(AutoDO::getId).reversed())
 				.collect(Collectors.toList());
 	}
 }

@@ -6,13 +6,12 @@ import com.jkk.aihome.entity.VO.HardwareWithStateVO;
 import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.hardware.request.DiscoverRequest;
 import com.jkk.aihome.hardware.request.StateReportRequest;
-import com.jkk.aihome.repository.HardwareRepository;
+import com.jkk.aihome.datainject.HardwareRepository;
 import com.jkk.aihome.service.IHardwareService;
 import com.jkk.aihome.service.IOverviewService;
 import com.jkk.aihome.service.IStateService;
 import com.jkk.aihome.util.IdUtil;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +32,7 @@ public class HardwareServiceImpl implements IHardwareService {
 
 	@Override
 	public List<HardwareWithStateVO> findAllHardwiredAndStates() {
-		List<HardwareDO> hardwareDOList = hardwareRepository.findAll(Sort.by(Sort.Direction.DESC, "heartTime"));
+		List<HardwareDO> hardwareDOList = hardwareRepository.findAllSortByHeartTimeDesc();
 
 		return hardwareDOList.stream().map(hardwareDO -> {
 			HardwareWithStateVO hardwareWithStateVO = new HardwareWithStateVO();
@@ -78,7 +77,7 @@ public class HardwareServiceImpl implements IHardwareService {
 	@Override
 	public Boolean reportStateProcess(StateReportRequest stateReportRequest) {
 		String devId = stateReportRequest.getDevId();
-		HardwareDO hardwareDO = hardwareRepository.findById(devId).orElseThrow(() -> new IdNotFindException(devId, "hardware"));
+		HardwareDO hardwareDO = hardwareRepository.findById(devId).orElse(null);
 		if (hardwareDO == null) {
 			return false;
 		}

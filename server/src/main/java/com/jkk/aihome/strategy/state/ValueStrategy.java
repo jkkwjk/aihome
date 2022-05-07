@@ -10,7 +10,7 @@ import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.hardware.request.AddStateRequest;
 import com.jkk.aihome.hardware.request.ValueAddStateRequest;
 import com.jkk.aihome.enums.StateType;
-import com.jkk.aihome.repository.HardwareStateRepository;
+import com.jkk.aihome.datainject.HardwareStateRepository;
 import com.jkk.aihome.repository.ValueStateRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;

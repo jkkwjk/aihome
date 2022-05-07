@@ -5,14 +5,13 @@ import com.jkk.aihome.enums.StateExceptionEnum;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.exception.StateException;
-import com.jkk.aihome.repository.HardwareStateRepository;
+import com.jkk.aihome.datainject.HardwareStateRepository;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.List;
 
 @Component
 public class StateStrategyManagement implements ApplicationContextAware {

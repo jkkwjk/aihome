@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 public class DataHolderImpl<T extends Serializable, ID> implements IDataHolder<T, ID> {
 	protected ConcurrentMap<ID, DataWithUpdate<T>> dataMap;
 
+	protected ConcurrentMap<ID, T> deleteMap;
+
 	protected Function<T, ID> idFunction;
 
 	protected JpaRepository<T, ID> repository;
@@ -30,6 +33,7 @@ public class DataHolderImpl<T extends Serializable, ID> implements IDataHolder<T
 
 	public DataHolderImpl(Collection<T> data, Function<T, ID> idFunction, JpaRepository<T, ID> repository, Scheduler scheduler) {
 		dataMap = data.stream().collect(Collectors.toConcurrentMap(idFunction, DataWithUpdate::new));
+		deleteMap = new ConcurrentHashMap<>();
 		this.idFunction = idFunction;
 		this.repository = repository;
 
@@ -39,11 +43,16 @@ public class DataHolderImpl<T extends Serializable, ID> implements IDataHolder<T
 	@Override
 	public T save(T newData) {
 		ID id = idFunction.apply(newData);
-		if (dataMap.containsKey(id)) {
+		if (id != null && dataMap.containsKey(id)) {
 			return this.update(newData);
 		}
-		newData = repository.save(newData);
-		dataMap.put(id, new DataWithUpdate<>(newData));
+		if (id == null) {
+			// 主键需要数据库自动生成
+			newData = repository.save(newData);
+			dataMap.put(idFunction.apply(newData), new DataWithUpdate<>(newData));
+		}else {
+			dataMap.put(id, new DataWithUpdate<>(newData, true));
+		}
 
 		return newData;
 	}
@@ -58,7 +67,7 @@ public class DataHolderImpl<T extends Serializable, ID> implements IDataHolder<T
 		if (!dataMap.containsKey(id)) {
 			throw new RuntimeException("不存在该条数据");
 		}
-		repository.deleteById(id);
+		deleteMap.put(id, dataMap.get(id).getData());
 		dataMap.remove(id);
 	}
 
@@ -69,7 +78,12 @@ public class DataHolderImpl<T extends Serializable, ID> implements IDataHolder<T
 
 	@Override
 	public Optional<T> findById(ID id) {
-		return Optional.ofNullable(dataMap.get(id).getData());
+		DataWithUpdate<T> dataWithUpdate = dataMap.get(id);
+		if (dataWithUpdate == null) {
+			return Optional.empty();
+		}else {
+			return Optional.of(dataWithUpdate.getData());
+		}
 	}
 
 	@Override
@@ -90,27 +104,37 @@ public class DataHolderImpl<T extends Serializable, ID> implements IDataHolder<T
 				.collect(Collectors.toList());
 //		reentrantReadWriteLock.writeLock().unlock();
 
-		log.info("持久化数量：{}, id：{}", updatedList.size(), updatedList.stream().map(idFunction).toArray());
-		repository.saveAll(updatedList);
+		if (deleteMap.size() != 0) {
+			log.info("删除数量：{}, id：{}", deleteMap.size(), deleteMap.keySet().toArray());
+			repository.deleteAll(deleteMap.values());
+			deleteMap.clear();
+		}
+
+		if (updatedList.size() != 0) {
+			log.info("持久化数量：{}, id：{}", updatedList.size(), updatedList.stream().map(idFunction).toArray());
+			repository.saveAll(updatedList);
+		}
 	}
 
 	static class DataWithUpdate<T extends Serializable>{
-		T data;
-		T origin;
+		private T data;
+		private T origin;
+
+		DataWithUpdate(T data, Boolean isInsert) {
+			this.data = data;
+			if (!isInsert) {
+				setOrigin(data);
+			}
+		}
 		DataWithUpdate(T data) {
-			setData(data);
-			setOrigin(data);
+			this(data, false);
 		}
 		synchronized void update(T newData) {
-			setData(newData);
+			this.data = newData;
 		}
 
 		public void setOrigin(T origin) {
 			this.origin = SerializationUtils.clone(origin);
-		}
-
-		public void setData(T data) {
-			this.data = data;
 		}
 
 		public T getData() {

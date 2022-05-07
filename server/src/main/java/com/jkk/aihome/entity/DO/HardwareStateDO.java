@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,7 +14,10 @@ import java.util.Date;
  */
 @Data
 @Entity(name = "hardware_state")
-public class HardwareStateDO {
+public class HardwareStateDO implements Serializable {
+
+	private static final long serialVersionUID = -8783564397230654488L;
+
 	@Id
 	private String stateId;
 

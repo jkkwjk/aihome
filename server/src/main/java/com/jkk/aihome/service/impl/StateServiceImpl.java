@@ -7,7 +7,7 @@ import com.jkk.aihome.entity.VO.StateVO;
 import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.hardware.request.AddStateRequest;
 import com.jkk.aihome.enums.StateType;
-import com.jkk.aihome.repository.HardwareStateRepository;
+import com.jkk.aihome.datainject.HardwareStateRepository;
 import com.jkk.aihome.service.IStateService;
 import com.jkk.aihome.strategy.state.StateStrategy;
 import com.jkk.aihome.strategy.state.StateStrategyManagement;
