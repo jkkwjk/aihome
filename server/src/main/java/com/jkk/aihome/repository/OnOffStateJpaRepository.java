@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 
 @Repository
-public interface OnOffStateRepository extends JpaRepository<OnOffStateDO, String> {
-	Integer removeAllByStateIdIn(Collection<String> stateId);
+public interface OnOffStateJpaRepository extends JpaRepository<OnOffStateDO, String> {
 }

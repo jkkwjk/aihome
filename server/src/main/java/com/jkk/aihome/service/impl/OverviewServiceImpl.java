@@ -6,7 +6,7 @@ import com.jkk.aihome.entity.VO.state.StateDetailVO;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.exception.IdNotFindException;
 import com.jkk.aihome.datainject.HardwareStateRepository;
-import com.jkk.aihome.repository.OverviewRepository;
+import com.jkk.aihome.datainject.OverviewRepository;
 import com.jkk.aihome.service.IOverviewService;
 import com.jkk.aihome.service.IStateService;
 import javafx.util.Pair;

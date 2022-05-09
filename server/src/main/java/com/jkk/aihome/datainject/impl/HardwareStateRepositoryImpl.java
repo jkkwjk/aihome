@@ -15,11 +15,9 @@ import java.util.stream.Collectors;
 
 @Repository
 public class HardwareStateRepositoryImpl extends DataHolderImpl<HardwareStateDO, String> implements HardwareStateRepository {
-	private final HardwareStateJpaRepository hardwareStateJpaRepository;
 
 	public HardwareStateRepositoryImpl(HardwareStateJpaRepository hardwareStateJpaRepository, Scheduler scheduler) {
 		super(hardwareStateJpaRepository.findAll(), HardwareStateDO::getStateId, hardwareStateJpaRepository, scheduler);
-		this.hardwareStateJpaRepository = hardwareStateJpaRepository;
 	}
 
 	@Override

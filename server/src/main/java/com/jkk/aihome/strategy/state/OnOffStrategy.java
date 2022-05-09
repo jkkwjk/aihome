@@ -10,7 +10,7 @@ import com.jkk.aihome.hardware.request.AddStateRequest;
 import com.jkk.aihome.hardware.request.OnOffAddStateRequest;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.datainject.HardwareStateRepository;
-import com.jkk.aihome.repository.OnOffStateRepository;
+import com.jkk.aihome.datainject.state.OnOffStateRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
