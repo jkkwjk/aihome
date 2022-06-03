@@ -1,12 +1,11 @@
-package com.jkk.aihome.repository.modestate;
+package com.jkk.aihome.datainject.state;
 
+import com.jkk.aihome.entity.DO.OnOffStateDO;
 import com.jkk.aihome.entity.DO.modestate.ModeStateDO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 
-@Repository
-public interface ModeStateRepository extends JpaRepository<ModeStateDO, String> {
-	Integer removeAllByStateIdIn(Collection<String> stateId);
+public interface ModeStateRepository extends IStateDataHolder<ModeStateDO, String> {
 }

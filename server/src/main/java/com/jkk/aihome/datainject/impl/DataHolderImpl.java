@@ -37,7 +37,7 @@ public class DataHolderImpl<T extends Serializable, ID> implements IDataHolder<T
 		this.idFunction = idFunction;
 		this.repository = repository;
 
-		ScheduleUtil.createPersistenceScheduleJob(scheduler, "0/10 * * * * ?", this);
+		ScheduleUtil.createPersistenceScheduleJob(scheduler, "0/55 * * * * ?", this);
 	}
 
 	@Override
@@ -57,6 +57,12 @@ public class DataHolderImpl<T extends Serializable, ID> implements IDataHolder<T
 		return newData;
 	}
 
+	@Override
+	public List<T> saveAll(List<T> newDataList) {
+		return newDataList.stream().map(this::save).collect(Collectors.toList());
+	}
+
+	@Override
 	public void delete(T data) {
 		ID id = idFunction.apply(data);
 		this.deleteById(id);

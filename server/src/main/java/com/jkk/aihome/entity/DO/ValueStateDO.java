@@ -6,10 +6,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 @Data
 @Entity(name = "value_state")
-public class ValueStateDO {
+public class ValueStateDO implements Serializable {
+	private static final long serialVersionUID = -3248989896666386666L;
+
 	@Id
 	private String stateId;
 

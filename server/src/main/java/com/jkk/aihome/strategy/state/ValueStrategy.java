@@ -11,7 +11,7 @@ import com.jkk.aihome.hardware.request.AddStateRequest;
 import com.jkk.aihome.hardware.request.ValueAddStateRequest;
 import com.jkk.aihome.enums.StateType;
 import com.jkk.aihome.datainject.HardwareStateRepository;
-import com.jkk.aihome.repository.ValueStateRepository;
+import com.jkk.aihome.datainject.state.ValueStateRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

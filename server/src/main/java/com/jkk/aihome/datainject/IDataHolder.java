@@ -13,6 +13,10 @@ public interface IDataHolder<T extends Serializable, ID> {
 
 	void deleteById(ID id);
 
+	List<T> saveAll(List<T> newDataList);
+
+	void delete(T data);
+
 	void persistence();
 
 	T update(T newData);
