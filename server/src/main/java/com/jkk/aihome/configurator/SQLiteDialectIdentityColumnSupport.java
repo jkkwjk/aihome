@@ -21,8 +21,6 @@ public class SQLiteDialectIdentityColumnSupport extends IdentityColumnSupportImp
 
 	@Override
 	public boolean hasDataTypeInIdentityColumn() {
-		// As specified in NHibernate dialect
-		// FIXME true
 		return false;
 	}
 
