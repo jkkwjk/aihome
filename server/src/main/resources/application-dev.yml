@@ -1,15 +1,6 @@
 spring:
-  jpa:
-    database: mysql
-    show-sql: true
-    hibernate:
-      naming:
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/aihome?autoReconnect=true&useUnicode=true&characterEncoding=utf8&useSSL=true&serverTimezone=Asia/Shanghai
-    username: root
-    password: 123456
+    url: jdbc:sqlite:C:\\Users\\HUAWEI\\Desktop\\aihome.db?date_string_format=yyyy-MM-dd HH:mm:ss
 
 mqtt:
   address: 192.168.1.12:1883

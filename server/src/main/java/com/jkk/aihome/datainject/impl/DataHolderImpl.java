@@ -8,6 +8,7 @@ import org.quartz.Scheduler;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.io.Serializable;
+import java.sql.DriverManager;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class DataHolderImpl<T extends Serializable, ID> implements IDataHolder<T
 		this.idFunction = idFunction;
 		this.repository = repository;
 
-		ScheduleUtil.createPersistenceScheduleJob(scheduler, "0/55 * * * * ?", this);
+		ScheduleUtil.createPersistenceScheduleJob(scheduler, "0/10 * * * * ?", this);
 	}
 
 	@Override
