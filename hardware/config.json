@@ -1,26 +1,16 @@
 {
-  "name": "传感器",
-  "icon": "el-icon-view",
+  "name": "测试硬件",
+  "icon": "el-icon-switch-button",
   "states": [
     {
         "stateType": "ON_OFF",
-        "canControl": false,
-        "name": "光线传感器",
-        "textActive": "亮",
-        "textUnActive": "暗",
-        "icon": "el-icon-sunny",
-        "iconActiveColor": "#409eff",
-        "iconUnActiveColor": "#99a9bf"
-    },
-    {
-      "stateType": "ON_OFF",
-      "canControl": false,
-      "name": "门窗传感器",
-      "textActive": "开启",
-      "textUnActive": "关闭",
-      "icon": "el-icon-lock",
-      "iconActiveColor": "#409eff",
-      "iconUnActiveColor": "#99a9bf"
+        "canControl": true,
+        "name": "状态-开关",
+        "textActive": "打开",
+        "textUnActive": "关闭",
+        "icon": "el-icon-switch-button",
+        "iconActiveColor": "#000000",
+        "iconUnActiveColor": "#aabbcc"
     }
   ]
 }

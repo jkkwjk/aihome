@@ -23,7 +23,7 @@ public class HardwareDO implements Serializable {
 
 	private String mac;
 
-	private Date discoverTime;
+	private String discoverTime;
 
-	private Date heartTime;
+	private String heartTime;
 }

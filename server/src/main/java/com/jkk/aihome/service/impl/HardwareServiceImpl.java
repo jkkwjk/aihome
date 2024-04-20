@@ -37,7 +37,8 @@ public class HardwareServiceImpl implements IHardwareService {
 		return hardwareDOList.stream().map(hardwareDO -> {
 			HardwareWithStateVO hardwareWithStateVO = new HardwareWithStateVO();
 			BeanUtils.copyProperties(hardwareDO, hardwareWithStateVO);
-
+			hardwareWithStateVO.setDiscoverTime(new Date(Long.parseLong(hardwareDO.getDiscoverTime())));
+			hardwareWithStateVO.setHeartTime(new Date(Long.parseLong(hardwareDO.getHeartTime())));
 			hardwareWithStateVO.setStates(stateService.findStateVOByDevId(hardwareDO.getDevId()));
 			return hardwareWithStateVO;
 		}).collect(Collectors.toList());
@@ -63,8 +64,8 @@ public class HardwareServiceImpl implements IHardwareService {
 	public Boolean addHardware(DiscoverRequest discoverRequest) {
 		HardwareDO hardwareDO = new HardwareDO();
 		BeanUtils.copyProperties(discoverRequest, hardwareDO);
-		hardwareDO.setDiscoverTime(new Date());
-		hardwareDO.setHeartTime(new Date());
+		hardwareDO.setDiscoverTime(String.valueOf(new Date().getTime()));
+		hardwareDO.setHeartTime(String.valueOf(new Date().getTime()));
 		hardwareRepository.save(hardwareDO);
 
 		// 添加状态
@@ -81,7 +82,7 @@ public class HardwareServiceImpl implements IHardwareService {
 		if (hardwareDO == null) {
 			return false;
 		}
-		hardwareDO.setHeartTime(new Date());
+		hardwareDO.setHeartTime(String.valueOf(new Date().getTime()));
 		hardwareRepository.save(hardwareDO);
 
 		stateReportRequest.getStates().forEach(state -> {

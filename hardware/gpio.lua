@@ -7,68 +7,58 @@ function saveStates()
 end
 
 -- init
-gpio_sun = 1
-gpio_door = 2
-states = {}
-canReport = false
-function deTwitteInt(pin, time, callback)
-    gpio.mode(pin, gpio.INT)
-    local t = tmr.create()
-    local lastState = gpio.read(pin)
-    callback(lastState)
-    gpio.trig(pin, "both" , function(level)
-        t:stop()
-        t:alarm(time, tmr.ALARM_SINGLE, function()
-            local nowState = gpio.read(pin)
-            if (nowState ~= lastState) then
-                lastState = nowState
-                callback(nowState)
-            end
-        end)
-    end)
+gpio_2 = 4
+gpio.mode(gpio_2, gpio.OUTPUT)
+states = nil
+if file.exists("state.save") then
+    states = sjson.decode(file.getcontents("state.save"))
+else
+    -- first load
+    states = {
+        false
+    }
+    saveStates()
 end
-deTwitteInt(gpio_sun, 1000, function(ret)
-    if (ret == 0) then
-        states[1] = true
-    else
-        states[1] = false
-    end
-    if (canReport) then
-        payload = {
-            devId = mqtt_config.devId,
-            states = {
-                {
-                    id = 0,
-                    state = states[1]
-                }
-            }
-        }
-        send(mqtt_config.topic.REPORT, payload)
-    end
-end)
-deTwitteInt(gpio_door, 1000, function(ret)
-    if (ret == 0) then
-        states[2] = true
-    else
-        states[2] = false
-    end
-    if (canReport) then
-        payload = {
-            devId = mqtt_config.devId,
-            states = {
-                {
-                    id = 1,
-                    state = states[2]
-                }
-            }
-        }
-        send(mqtt_config.topic.REPORT, payload)
-    end
-end)
+
+
+function turnOn()
+    gpio.write(gpio_2, gpio.HIGH)
+end
+
+function turnOff()
+    gpio.write(gpio_2, gpio.LOW)
+end
+
+if states[1] then
+    turnOn()
+else
+    turnOff()
+end
+
 
 -- do sth when control cmd recived
 function handleControl(messageId, id, value)
-    print("not support control")
+    print("receive")
+    if value then
+        turnOn()
+    else
+        turnOff()
+    end
+    states[id + 1] = value
+    saveStates()
+    
+    payload = {
+        id = messageId,
+        devId = mqtt_config.devId,
+        states = {
+            {
+                id = id,
+                state = value
+            }
+        }
+    }
+    send(mqtt_config.topic.REPORT, payload)
+--    gpio.mode(gpio_2, gpio.HIGH)
 end
 
 -- return value when query cmd recived

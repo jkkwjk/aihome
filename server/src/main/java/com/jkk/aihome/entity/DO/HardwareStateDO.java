@@ -29,5 +29,5 @@ public class HardwareStateDO implements Serializable {
 
 	private String name;
 
-	private Date reportTime;
+	private String reportTime;
 }

@@ -58,7 +58,7 @@ public abstract class StateStrategy {
 		BeanUtils.copyProperties(addStateRequest, hardwareStateDO);
 		hardwareStateDO.setStateId(stateId);
 		hardwareStateDO.setType(stateType.getType());
-		hardwareStateDO.setReportTime(new Date());
+		hardwareStateDO.setReportTime(String.valueOf(new Date().getTime()));
 		return hardwareStateDO;
 	}
 }

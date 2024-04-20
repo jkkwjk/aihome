@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: jdbc:sqlite:C:\\Users\\HUAWEI\\Desktop\\aihome.db?date_string_format=yyyy-MM-dd HH:mm:ss
+    url: jdbc:sqlite:C:\\Users\\jkk\\Desktop\\aihome\\identifier.sqlite?date_string_format=yyyy-MM-dd HH:mm:ss
 
 mqtt:
-  address: 192.168.1.12:1883
+  address: 192.168.1.6:1883
   keep-alive-time: 30

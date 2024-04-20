@@ -28,7 +28,7 @@ CREATE TABLE `auto`  (
   `enable` integer(4),
   `code` blob,
   `cron` text(40),
-  `events` text(1000),
+  `events` text(1000)
 )
 
 -- ----------------------------

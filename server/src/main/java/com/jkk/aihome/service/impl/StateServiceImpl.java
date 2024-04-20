@@ -43,6 +43,7 @@ public class StateServiceImpl implements IStateService {
 			StateStrategy stateStrategy = stateStrategyManagement.getStateStrategyByStateType(stateType);
 			stateVO.setState(stateStrategy.getStringState(stateId));
 			stateVO.setIcon(stateStrategy.getShowInHardwareIcon(stateId));
+			stateVO.setReportTime(new Date(Long.parseLong(hardwareStateDO.getReportTime())));
 
 			return stateVO;
 		}).collect(Collectors.toList());
@@ -100,7 +101,7 @@ public class StateServiceImpl implements IStateService {
 	@Override
 	public void updateState(String stateId, Object state) {
 		HardwareStateDO hardwareStateDO = hardwareStateRepository.findById(stateId).orElseThrow(() -> new IdNotFindException(stateId, "hardware_state"));
-		hardwareStateDO.setReportTime(new Date());
+		hardwareStateDO.setReportTime(String.valueOf(new Date().getTime()));
 		hardwareStateRepository.save(hardwareStateDO);
 
 		stateStrategyManagement.getStateStrategyByStateId(stateId).updateState(stateId, state);
