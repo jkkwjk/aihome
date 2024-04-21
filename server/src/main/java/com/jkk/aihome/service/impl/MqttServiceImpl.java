@@ -5,6 +5,9 @@ import com.jkk.aihome.enums.TopicNameEnum;
 import com.jkk.aihome.hardware.response.ControlResponse;
 import com.jkk.aihome.hardware.response.GetDevIdResponse;
 import com.jkk.aihome.hardware.response.IdResponse;
+import com.jkk.aihome.hardware.response.dev.DevGenerateResponse;
+import com.jkk.aihome.hardware.response.dev.DevRemoveResponse;
+import com.jkk.aihome.hardware.response.dev.DevStartDiscoverResponse;
 import com.jkk.aihome.service.IMqttService;
 import com.jkk.aihome.strategy.state.StateStrategyManagement;
 import com.jkk.aihome.util.IdUtil;
@@ -25,15 +28,17 @@ public class MqttServiceImpl implements IMqttService {
 
 	@Override
 	public void startDiscover() {
-		messageUtil.sendMessageOk(TopicNameEnum.DEV.getTopic(), new IdResponse("1"));
+		messageUtil.sendMessageOk(TopicNameEnum.DEV.getTopic(), new DevStartDiscoverResponse());
 	}
 
 	@Override
-	public void sendDevId(String messageId) {
-		GetDevIdResponse getDevIdResponse = new GetDevIdResponse();
-		getDevIdResponse.setId(messageId);
-		getDevIdResponse.setDevId(IdUtil.generateDevId());
-		messageUtil.sendMessageOk(TopicNameEnum.DEV.getTopic(), getDevIdResponse);
+	public void sendDevId(String mac) {
+		messageUtil.sendMessageOk(TopicNameEnum.DEV.getTopic(), new DevGenerateResponse(mac, IdUtil.generateDevId()));
+	}
+
+	@Override
+	public void deleteDevId(String devId) {
+		messageUtil.sendMessageOk(TopicNameEnum.DEV.getTopic(), new DevRemoveResponse(devId));
 	}
 
 	@Override

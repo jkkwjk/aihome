@@ -26,18 +26,15 @@ function mqtt_init()
             end)
             
             mqttClient:on("message", function(client, topic, data)
-                print("new msg" .. data)
                 local fSwitch = handleMessageFunction[topic]
                 local reposion = sjson.decode(data)
                 if fSwitch then --key exists 
                     if reposion.code ~= nil then
+                        print("receive msg" .. data .. "--from:" .. topic)
                         if canProcess(reposion.data.id) then
                             local result = fSwitch(reposion.data, reposion.msg) --do func 
                         end
                     end
-                     
-                else --key not found  
-                    print("not support topic: " .. topic)
                 end
             end)
         end
@@ -64,15 +61,12 @@ end)
 
 function connectSuccess()
     print("connect")
-    mq_status = false
+    mq_status = true
     
-    mqttClient:subscribe(mqtt_config.topic.REPORT,1)
     mqttClient:subscribe(mqtt_config.topic.CONTROL,1)
+    mqttClient:subscribe(mqtt_config.topic.DEV,1)
     
-    if(mqtt_config.devId == nil) then
-        -- get DevId
-        mqttClient:subscribe(mqtt_config.topic.DEV,1)
-    else
+    if(mqtt_config.devId ~= nil) then
         -- reconnect
         send(mqtt_config.topic.REPORT, reportAllState())
         canReport = true -- gpio.lua
@@ -82,7 +76,7 @@ function connectSuccess()
 end
 
 function canProcess(id)
-    local len = #id;
+    local len = #id
     if (string.find(id, ":") ~= nil) then
         local mac = string.sub(id, 1, 17)
         return mac == wifi.sta.getmac()

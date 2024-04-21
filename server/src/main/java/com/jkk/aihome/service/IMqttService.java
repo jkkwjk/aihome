@@ -13,6 +13,12 @@ public interface IMqttService {
 	void sendDevId(String messageId);
 
 	/**
+	 * 移除指定设备
+	 * @param devId
+	 */
+	void deleteDevId(String devId);
+
+	/**
 	 * 给指定设备发送控制指令
 	 * @param stateId 状态id
 	 * @param state 想变成的状态

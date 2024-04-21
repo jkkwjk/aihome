@@ -8,6 +8,7 @@ import com.jkk.aihome.hardware.request.DiscoverRequest;
 import com.jkk.aihome.hardware.request.StateReportRequest;
 import com.jkk.aihome.datainject.HardwareRepository;
 import com.jkk.aihome.service.IHardwareService;
+import com.jkk.aihome.service.IMqttService;
 import com.jkk.aihome.service.IOverviewService;
 import com.jkk.aihome.service.IStateService;
 import com.jkk.aihome.util.IdUtil;
@@ -23,12 +24,14 @@ public class HardwareServiceImpl implements IHardwareService {
 	private final HardwareRepository hardwareRepository;
 	private final IStateService stateService;
 	private final IOverviewService overviewService;
+	private final IMqttService mqttService;
 
-	public HardwareServiceImpl(HardwareRepository hardwareRepository, IStateService stateService, IOverviewService overviewService) {
+	public HardwareServiceImpl(HardwareRepository hardwareRepository, IStateService stateService, IOverviewService overviewService, IMqttService mqttService) {
 		this.hardwareRepository = hardwareRepository;
 		this.stateService = stateService;
 		this.overviewService = overviewService;
-	}
+        this.mqttService = mqttService;
+    }
 
 	@Override
 	public List<HardwareWithStateVO> findAllHardwiredAndStates() {
@@ -57,6 +60,8 @@ public class HardwareServiceImpl implements IHardwareService {
 		overviewService.deleteAllOverviewByDevId(devId);
 		stateService.deleteAllStateByDevId(devId);
 		hardwareRepository.deleteById(devId);
+
+		mqttService.deleteDevId(devId);
 	}
 
 	@Transactional

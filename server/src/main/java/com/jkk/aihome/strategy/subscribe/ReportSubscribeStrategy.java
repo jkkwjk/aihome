@@ -5,6 +5,7 @@ import com.jkk.aihome.aspect.ReceiveMsgNotPCSend;
 import com.jkk.aihome.enums.TopicNameEnum;
 import com.jkk.aihome.hardware.request.StateReportRequest;
 import com.jkk.aihome.service.IHardwareService;
+import com.jkk.aihome.service.IMqttService;
 import com.jkk.aihome.util.MessageUtil;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.stereotype.Component;
@@ -13,12 +14,12 @@ import org.springframework.stereotype.Component;
 public class ReportSubscribeStrategy extends SubscribeStrategy {
 	private final IHardwareService hardwareService;
 
-	private final MessageUtil messageUtil;
+	private final IMqttService mqttService;
 
-	public ReportSubscribeStrategy(IHardwareService hardwareService, MessageUtil messageUtil) {
+	public ReportSubscribeStrategy(IHardwareService hardwareService, IMqttService mqttService) {
 		this.hardwareService = hardwareService;
-		this.messageUtil = messageUtil;
-	}
+        this.mqttService = mqttService;
+    }
 
 	@Override
 	public TopicNameEnum getMatchTopic() {
@@ -34,7 +35,7 @@ public class ReportSubscribeStrategy extends SubscribeStrategy {
 			this.setChanged();
 			this.notifyObservers(stateReportRequest);
 		}else {
-			messageUtil.sendMessageError(TopicNameEnum.REPORT.getTopic(), "no devId", stateReportRequest.getId());
+			mqttService.deleteDevId(stateReportRequest.getDevId());
 		}
 
 	}
